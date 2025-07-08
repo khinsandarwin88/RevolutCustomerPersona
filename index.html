@@ -42,9 +42,9 @@
             --event-expense-color: #ff66b2;
             --delete-button-color: #ff66b2;
             --no-data-color: #8e44ad;
-            --talk-to-human-bg: #00ffcc;
-            --talk-to-human-color: #0f0a20;
-            --talk-to-human-shadow: #00ffcc;
+            --talk-to-human-bg: #00ffcc; /* This variable is now less critical as the button is removed */
+            --talk-to-human-color: #0f0a20; /* This variable is now less critical as the button is removed */
+            --talk-to-human-shadow: #00ffcc; /* This variable is now less critical as the button is removed */
             --modal-bg: #2b1c40;
             --modal-border: #00ffcc;
             --modal-shadow: rgba(0, 255, 204, 0.5);
@@ -480,28 +480,6 @@
             transition: color 0.5s ease;
         }
 
-        .talk-to-human-btn { /* Renamed from .talk-to-human to avoid conflict with chat button */
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            background-color: var(--talk-to-human-bg);
-            color: var(--talk-to-human-color);
-            border-radius: 50px;
-            padding: 15px 25px;
-            font-size: 1.1em;
-            font-weight: bold;
-            box-shadow: 0 0 20px var(--talk-to-human-shadow), 0 0 40px var(--talk-to-human-shadow);
-            transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.5s ease, color 0.5s ease;
-            cursor: pointer;
-            z-index: 100;
-            border: none;
-        }
-
-        .talk-to-human-btn:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 0 30px var(--talk-to-human-shadow), 0 0 60px var(--talk-to-human-shadow);
-        }
-
         /* Modal Styles */
         .modal-overlay {
             position: fixed;
@@ -605,28 +583,27 @@
             transition: background-color 0.5s ease, color 0.5s ease, border-color 0.5s ease;
         }
 
-        /* Chatbot Interface Styles */
+        /* Chatbot Interface Styles - Now at the top, always visible */
+        .chat-section {
+            width: 100%;
+            display: flex;
+            justify-content: center; /* Center the chat container within the section */
+            margin-bottom: 25px; /* Space between chat and next section */
+        }
+
         .chat-container {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            width: 350px;
-            height: 500px;
+            width: 90%; /* Occupy full width of its parent container */
+            max-width: 700px; /* Limit max width for better readability */
             background-color: var(--chat-bg);
             border-radius: 15px;
             box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
             display: flex;
             flex-direction: column;
             overflow: hidden;
-            z-index: 1000;
-            transform: scale(0);
-            transform-origin: bottom right;
-            transition: transform 0.3s ease-out;
+            z-index: 10; /* Ensure it's above other content */
             border: 1px solid var(--chat-header-bg);
-        }
-
-        .chat-container.open {
-            transform: scale(1);
+            height: 450px; /* Fixed height for always-visible chat */
+            transition: background-color 0.5s ease, border-color 0.5s ease, box-shadow 0.5s ease;
         }
 
         .chat-header {
@@ -641,16 +618,7 @@
             border-top-left-radius: 15px;
             border-top-right-radius: 15px;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-        }
-
-        .chat-header button {
-            background: none;
-            border: none;
-            color: var(--chat-header-text);
-            font-size: 1.5em;
-            cursor: pointer;
-            padding: 5px;
-            margin: 0; /* Override general button margin */
+            /* No cursor: pointer or toggle button for always visible */
         }
 
         .chat-messages {
@@ -751,21 +719,61 @@
         }
 
 
-        /* Responsive adjustments for chat */
+        /* Responsive adjustments */
         @media (max-width: 600px) {
-            .chat-container {
-                width: 90%;
-                height: 80%;
-                bottom: 10px;
-                right: 5%;
-                left: 5%;
-                max-width: none; /* Allow full width on small screens */
+            header h1 {
+                font-size: 2em;
             }
-            .talk-to-human-btn {
-                bottom: 10px;
-                right: 10px;
-                padding: 10px 15px;
+            .container {
+                padding: 20px;
+                margin: 15px auto;
+            }
+            label, input, select, button, .goal-display p, .event-list li .event-details {
                 font-size: 0.9em;
+            }
+            .event-list li {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .event-list li .event-amount {
+                margin-top: 5px;
+            }
+            .event-actions {
+                position: absolute;
+                top: 10px;
+                right: 10px;
+                margin-left: 0;
+            }
+            .theme-switcher {
+                top: 10px;
+                left: 10px;
+            }
+            .theme-switcher label, .theme-switcher select {
+                font-size: 0.8em;
+                padding: 6px 10px;
+            }
+            .chat-container {
+                width: 95%; /* Make it wider on small screens */
+                height: 350px; /* Adjust height for smaller screens */
+                margin: 15px auto;
+            }
+            .chat-header {
+                padding: 10px;
+                font-size: 1em;
+            }
+            .chat-messages {
+                padding: 10px;
+                gap: 8px;
+            }
+            .chat-message {
+                font-size: 0.85em;
+            }
+            .chat-input-form {
+                padding: 10px;
+            }
+            .chat-input-form input, .chat-input-form button {
+                font-size: 0.9em;
+                padding: 8px 12px;
             }
         }
     </style>
@@ -784,6 +792,24 @@
         <h1>Revolut Horizons</h1>
         <p>Your Personal Financial Navigator</p>
     </header>
+
+    <!-- Chatbot Interface - Now integrated directly into the main content flow -->
+    <section class="chat-section">
+        <div id="chatContainer" class="chat-container">
+            <div class="chat-header">
+                <span>Revolut Assistant</span>
+                <!-- No toggle button needed as it's always open -->
+            </div>
+            <div id="chatMessages" class="chat-messages">
+                <!-- Chat messages will be added here -->
+                <!-- Initial message handled by JS renderChatHistory -->
+            </div>
+            <form id="chatInputForm" class="chat-input-form">
+                <input type="text" id="chatInput" placeholder="Type your message...">
+                <button type="submit" id="chatSendBtn">Send</button>
+            </form>
+        </div>
+    </section>
 
     <main class="container">
         <section id="goal-setting">
@@ -848,24 +874,6 @@
         </section>
     </main>
 
-    <button class="talk-to-human-btn" onclick="toggleChat()">Need Help? Talk to us.</button>
-
-    <!-- Chatbot Interface -->
-    <div id="chatContainer" class="chat-container">
-        <div class="chat-header">
-            <span>Revolut Assistant</span>
-            <button onclick="toggleChat()">&times;</button>
-        </div>
-        <div id="chatMessages" class="chat-messages">
-            <!-- Chat messages will be added here -->
-            <div class="chat-message bot">Hello! I'm your Revolut Assistant. How can I help you with your financial horizons today?</div>
-        </div>
-        <form id="chatInputForm" class="chat-input-form">
-            <input type="text" id="chatInput" placeholder="Type your message...">
-            <button type="submit" id="chatSendBtn">Send</button>
-        </form>
-    </div>
-
     <!-- Custom Modal Structure -->
     <div id="customModal" class="modal-overlay">
         <div class="modal-content">
@@ -919,12 +927,29 @@
         const chatInputForm = document.getElementById('chatInputForm');
         const chatInput = document.getElementById('chatInput');
         const chatSendBtn = document.getElementById('chatSendBtn');
+        // chatToggleBtn is removed as the chat is always open now
 
         let goal = null;
         let events = [];
         let editingEventIndex = -1; // -1 means no event is being edited
 
-        let chatHistory = []; // Stores chat messages for display and LLM context
+        // Initial system prompt for the AI assistant
+        const systemPrompt = {
+            role: "user",
+            parts: [{ text: `You are Revolut Assistant, a helpful, empathetic, and professional financial assistant. Your primary goal is to assist users with their 'Horizons' financial planning within this application. You can help with:
+- Explaining how to set a Horizon Goal.
+- Guiding them on how to add/edit/delete Life Events (income or expenses).
+- Clarifying how their financial trajectory is impacted by events.
+- Providing general, simple explanations about financial concepts related to planning (e.g., "What is a budget?" or "Why is long-term planning important?").
+- **Crucially, if a user expresses a strong need to speak with a human, asks for a direct appointment, or uses keywords like 'human', 'talk to someone', 'agent', 'appointment', 'schedule', 'speak to someone', 'customer service', 'urgent', 'scam', 'stolen', 'not working', 'emergency', 'fraud', 'compromised', 'report', you MUST gracefully escalate them to a human agent immediately.**
+- When escalating, confirm their request and state that a human will be in touch shortly. Provide a clear message like: "I understand this is an urgent matter. For immediate assistance with scams, fraud, or emergencies, please call our 24/7 support line at +353 1 800 123 456 (example number) or visit our dedicated security page at revolut.com/security (example URL). I am connecting you to a live agent for further assistance right away." Do NOT attempt to resolve complex personal financial issues or provide specific financial advice.
+- Always maintain a warm, clear, and unambiguous tone. Avoid jargon.
+- If a user asks something outside the scope of 'Horizons' or general financial planning, gently redirect them or offer to escalate if they seem frustrated.
+- Your responses should be concise and helpful.
+`}]
+        };
+
+        let chatHistory = [systemPrompt]; // Stores chat messages for display and LLM context
         let isHumanEscalated = false; // Flag to stop AI responses after escalation
         let isAILoading = false; // Flag to prevent multiple AI requests
 
@@ -972,7 +997,9 @@
             localStorage.setItem('horizonsGoal', JSON.stringify(goal));
             localStorage.setItem('horizonsEvents', JSON.stringify(events));
             localStorage.setItem('horizonsTheme', document.body.dataset.theme);
-            localStorage.setItem('horizonsChatHistory', JSON.stringify(chatHistory));
+            // Filter out the system prompt before saving chat history
+            const savableChatHistory = chatHistory.filter(msg => msg !== systemPrompt);
+            localStorage.setItem('horizonsChatHistory', JSON.stringify(savableChatHistory));
             localStorage.setItem('horizonsIsHumanEscalated', JSON.stringify(isHumanEscalated));
         }
 
@@ -1007,7 +1034,11 @@
             }
 
             if (storedChatHistory) {
-                chatHistory = JSON.parse(storedChatHistory);
+                // Prepend the system prompt to the loaded history
+                chatHistory = [systemPrompt, ...JSON.parse(storedChatHistory)];
+                renderChatHistory();
+            } else {
+                // If no history, just render the initial bot message
                 renderChatHistory();
             }
 
@@ -1154,10 +1185,10 @@
                 goalAmountInput.value = goal.targetAmount;
                 // Format date for input type="date" (YYYY-MM-DD)
                 const dateObj = new Date(goal.targetDate);
-                const yyyy = dateObj.getFullYear();
-                const mm = String(dateObj.getMonth() + 1).padStart(2, '0');
-                const dd = String(dateObj.getDate()).padStart(2, '0');
-                goalDateInput.value = `${yyyy}-${mm}-${dd}`;
+                const year = dateObj.getFullYear();
+                const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+                const day = String(dateObj.getDate()).padStart(2, '0');
+                goalDateInput.value = `${year}-${month}-${day}`;
 
                 showModal('Edit Goal', 'Modify your goal details above and click "Set My Goal" to update.', 'alert');
             }
@@ -1221,10 +1252,10 @@
                 eventAmountInput.value = eventToEdit.amount;
                 // Format date for input type="date" (YYYY-MM-DD)
                 const dateObj = new Date(eventToEdit.date);
-                const yyyy = dateObj.getFullYear();
-                const mm = String(dateObj.getMonth() + 1).padStart(2, '0');
-                const dd = String(dateObj.getDate()).padStart(2, '0');
-                eventDateInput.value = `${yyyy}-${mm}-${dd}`;
+                const year = dateObj.getFullYear();
+                const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+                const day = String(dateObj.getDate()).padStart(2, '0');
+                eventDateInput.value = `${year}-${month}-${day}`;
 
                 addEventBtn.textContent = 'Update Event';
                 showModal('Edit Event', 'Modify the event details above and click "Update Event" to save changes.');
@@ -1236,7 +1267,7 @@
                 localStorage.clear();
                 goal = null;
                 events = [];
-                chatHistory = []; // Clear chat history on full reset
+                chatHistory = [systemPrompt]; // Reset chat history to initial system prompt
                 isHumanEscalated = false; // Reset escalation flag
                 editingEventIndex = -1;
                 renderGoal();
@@ -1244,10 +1275,10 @@
                 renderChatHistory(); // Re-render chat to show initial bot message
                 // Reset default date for inputs
                 const today = new Date();
-                const yyyy = today.getFullYear();
-                const mm = String(today.getMonth() + 1).padStart(2, '0');
-                const dd = String(today.getDate()).padStart(2, '0');
-                const todayString = `${yyyy}-${mm}-${dd}`;
+                const year = today.getFullYear();
+                const month = String(today.getMonth() + 1).padStart(2, '0');
+                const day = String(today.getDate()).padStart(2, '0');
+                const todayString = `${year}-${month}-${day}`;
                 goalDateInput.value = todayString;
                 eventDateInput.value = todayString;
                 showModal('Data Reset', 'All your Horizons data has been cleared.');
@@ -1255,13 +1286,8 @@
         });
 
         // --- Chatbot Functions ---
-        function toggleChat() {
-            chatContainer.classList.toggle('open');
-            if (chatContainer.classList.contains('open')) {
-                chatMessagesDiv.scrollTop = chatMessagesDiv.scrollHeight; // Scroll to bottom on open
-                chatInput.focus();
-            }
-        }
+        // The toggleChat function is no longer needed as the chat is always open.
+        // The chatToggleBtn is also removed from HTML and JS.
 
         function addMessageToChat(sender, message) {
             const messageDiv = document.createElement('div');
@@ -1273,18 +1299,25 @@
 
         function renderChatHistory() {
             chatMessagesDiv.innerHTML = ''; // Clear existing messages
-            if (chatHistory.length === 0) {
-                // Add initial bot message if history is empty
+            // Only display user and model messages, skip the system prompt
+            const displayableHistory = chatHistory.filter(msg => msg.role === 'user' || msg.role === 'model');
+
+            if (displayableHistory.length === 0) {
+                // Add initial bot message if history is empty (after filtering system prompt)
                 addMessageToChat('bot', "Hello! I'm your Revolut Assistant. How can I help you with your financial horizons today?");
             } else {
-                chatHistory.forEach(msg => {
+                displayableHistory.forEach(msg => {
                     addMessageToChat(msg.role === 'user' ? 'user' : 'bot', msg.parts[0].text);
                 });
             }
         }
 
         async function getBotResponse(userMessage) {
-            if (isHumanEscalated || isAILoading) return; // Prevent new AI responses if escalated or loading
+            if (isHumanEscalated || isAILoading) {
+                // If already escalated or loading, prevent new AI responses.
+                // We can optionally add a message here to indicate that a human agent is already being connected.
+                return;
+            }
 
             isAILoading = true;
             chatSendBtn.disabled = true; // Disable send button
@@ -1296,7 +1329,7 @@
 
             // Check for escalation keywords
             const lowerCaseMessage = userMessage.toLowerCase();
-            const escalationKeywords = ['human', 'talk', 'agent', 'appointment', 'schedule', 'speak to someone', 'customer service', 'help me now'];
+            const escalationKeywords = ['human', 'talk', 'agent', 'appointment', 'schedule', 'speak to someone', 'customer service', 'urgent', 'scam', 'stolen', 'not working', 'emergency', 'fraud', 'compromised', 'report'];
             const needsEscalation = escalationKeywords.some(keyword => lowerCaseMessage.includes(keyword));
 
             if (needsEscalation) {
@@ -1304,13 +1337,13 @@
                 saveToLocalStorage(); // Save escalation state
 
                 chatMessagesDiv.removeChild(loadingIndicator);
-                addMessageToChat('bot', "I understand you'd like to speak with a human or schedule an appointment. Let me connect you directly with our support team.");
-                // Immediately show the human escalation modal
+                addMessageToChat('bot', "I understand this is an urgent matter. For immediate assistance with scams, fraud, or emergencies, please call our 24/7 support line at +353 1 800 123 456 (example number) or visit our dedicated security page at revolut.com/security (example URL). I am connecting you to a live agent for further assistance right away.");
+                // Show the human escalation modal
                 const now = new Date();
                 const currentTime = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
                 showModal(
                     'Connecting You to Support',
-                    `Thanks, Margaret – your request has been received!\n\nMary from Customer Care will be with you shortly.\n(Timestamp: ${currentTime})`
+                    `Thanks, Margaret – your request has been received!\n\nMary from Customer Care will be with you shortly.\n(Timestamp: ${currentTime})\n\nFor urgent issues, please use the provided contact details.`
                 );
                 isAILoading = false;
                 chatSendBtn.disabled = false;
@@ -1320,9 +1353,10 @@
             // If not escalating, proceed with LLM call
             try {
                 // Add user message to chat history for LLM context
-                chatHistory.push({ role: "user", parts: [{ text: userMessage }] });
+                // Ensure the system prompt is always the first element for the LLM call
+                const currentChatContext = [...chatHistory, { role: "user", parts: [{ text: userMessage }] }];
 
-                const payload = { contents: chatHistory };
+                const payload = { contents: currentChatContext };
                 const apiKey = ""; // Canvas will provide this at runtime
                 const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
 
@@ -1340,7 +1374,8 @@
                     result.candidates[0].content.parts.length > 0) {
                     const botResponseText = result.candidates[0].content.parts[0].text;
                     addMessageToChat('bot', botResponseText);
-                    chatHistory.push({ role: "model", parts: [{ text: botResponseText }] }); // Add bot response to history
+                    chatHistory.push({ role: "user", parts: [{ text: userMessage }] }); // Add user message to local history *after* API call
+                    chatHistory.push({ role: "model", parts: [{ text: botResponseText }] }); // Add bot response to local history
                     saveToLocalStorage(); // Save updated chat history
                 } else {
                     addMessageToChat('bot', "I'm sorry, I couldn't get a response right now. Please try again later.");
@@ -1361,6 +1396,7 @@
             e.preventDefault();
             const userMessage = chatInput.value.trim();
             if (userMessage) {
+                // Only add to display here, actual chatHistory update for LLM happens in getBotResponse
                 addMessageToChat('user', userMessage);
                 chatInput.value = ''; // Clear input field
                 getBotResponse(userMessage);
@@ -1382,10 +1418,10 @@
             // Set default date for goal and event to today if not loaded from storage
             if (!goalDateInput.value) {
                 const today = new Date();
-                const yyyy = today.getFullYear();
-                const mm = String(today.getMonth() + 1).padStart(2, '0');
-                const dd = String(today.getDate()).padStart(2, '0');
-                const todayString = `${yyyy}-${mm}-${dd}`;
+                const year = today.getFullYear();
+                const month = String(today.getMonth() + 1).padStart(2, '0');
+                const day = String(today.getDate()).padStart(2, '0');
+                const todayString = `${year}-${month}-${day}`;
                 goalDateInput.value = todayString;
                 eventDateInput.value = todayString;
             }
