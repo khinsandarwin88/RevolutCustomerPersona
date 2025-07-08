@@ -1102,7 +1102,7 @@ If a user expresses a strong need to speak with a human, asks for a direct appoi
             };
         };
 
-        let chatHistory = [getSystemPrompt(currentLanguage)]; // Initialize with system prompt for current language
+        let chatHistory = []; // Initialize chatHistory as an empty array, will store only user/model messages
 
         let isHumanEscalated = false; // Flag to stop AI responses after escalation
         let isAILoading = false; // Flag to prevent multiple AI requests
@@ -1151,9 +1151,8 @@ If a user expresses a strong need to speak with a human, asks for a direct appoi
             localStorage.setItem('horizonsGoal', JSON.stringify(goal));
             localStorage.setItem('horizonsEvents', JSON.stringify(events));
             localStorage.setItem('horizonsTheme', document.body.dataset.theme);
-            // Filter out the system prompt before saving chat history
-            const savableChatHistory = chatHistory.filter(msg => msg.role !== 'user' || msg.parts[0].text.indexOf('You are Revolut Assistant') === -1);
-            localStorage.setItem('horizonsChatHistory', JSON.stringify(savableChatHistory));
+            // Save chatHistory directly as it now only contains user/model messages
+            localStorage.setItem('horizonsChatHistory', JSON.stringify(chatHistory));
             localStorage.setItem('horizonsIsHumanEscalated', JSON.stringify(isHumanEscalated));
             localStorage.setItem('horizonsLanguage', currentLanguage); // Save current language
         }
@@ -1195,13 +1194,10 @@ If a user expresses a strong need to speak with a human, asks for a direct appoi
             }
 
             if (storedChatHistory) {
-                // Prepend the system prompt to the loaded history
-                // Re-initialize chatHistory with the dynamic system prompt and then append loaded history
-                chatHistory = [getSystemPrompt(currentLanguage), ...JSON.parse(storedChatHistory)];
-                renderChatHistory();
+                // Load chat history directly into the array
+                chatHistory = JSON.parse(storedChatHistory);
             } else {
-                // If no history, just render the initial bot message
-                renderChatHistory();
+                chatHistory = []; // Ensure it's empty if nothing was stored
             }
 
             if (storedIsHumanEscalated) {
@@ -1429,7 +1425,7 @@ If a user expresses a strong need to speak with a human, asks for a direct appoi
                 localStorage.clear();
                 goal = null;
                 events = [];
-                chatHistory = [getSystemPrompt(currentLanguage)]; // Reset chat history to initial system prompt
+                chatHistory = []; // Reset chat history to empty
                 isHumanEscalated = false; // Reset escalation flag
                 editingEventIndex = -1;
                 currentLanguage = 'en'; // Reset language to English
@@ -1460,14 +1456,11 @@ If a user expresses a strong need to speak with a human, asks for a direct appoi
 
         function renderChatHistory() {
             chatMessagesDiv.innerHTML = ''; // Clear existing messages
-            // Only display user and model messages, skip the system prompt (which is at index 0)
-            const displayableHistory = chatHistory.slice(1); // Start from index 1 to skip the system prompt
-
-            if (displayableHistory.length === 0) {
-                // Add initial bot message if history is empty (after filtering system prompt)
+            if (chatHistory.length === 0) {
+                // Add initial bot message if history is empty
                 addMessageToChat('bot', translations[currentLanguage].greeting);
             } else {
-                displayableHistory.forEach(msg => {
+                chatHistory.forEach(msg => {
                     addMessageToChat(msg.role === 'user' ? 'user' : 'bot', msg.parts[0].text);
                 });
             }
@@ -1554,12 +1547,11 @@ If a user expresses a strong need to speak with a human, asks for a direct appoi
             try {
                 const financialSummary = getFinancialSummary();
 
-                // Construct the prompt for the LLM, including the system prompt, financial summary, and chat history
-                // The system prompt (chatHistory[0]) is dynamically generated with the current language.
-                // chatHistory.slice(1) gets all user/model turns after the initial system prompt.
+                // Construct the prompt for the LLM: System prompt first, then all chat history
                 const chatHistoryForLLM = [
-                    { role: "user", parts: [{ text: getSystemPrompt(currentLanguage).parts[0].text + financialSummary }] },
-                    ...chatHistory.slice(1)
+                    getSystemPrompt(currentLanguage), // Dynamic system prompt
+                    { role: "user", parts: [{ text: financialSummary }] }, // Add financial summary as a user message for context
+                    ...chatHistory // All user/model messages
                 ];
 
                 console.log("Sending to LLM:", JSON.stringify(chatHistoryForLLM, null, 2));
@@ -1605,8 +1597,6 @@ If a user expresses a strong need to speak with a human, asks for a direct appoi
             e.preventDefault();
             const userMessage = chatInput.value.trim();
             if (userMessage) {
-                // The user message is now added to chatHistory *before* calling getBotResponse
-                // in the getBotResponse function itself for better history management.
                 addMessageToChat('user', userMessage); // Only add to display here
                 chatInput.value = ''; // Clear input field
                 getBotResponse(userMessage);
@@ -1616,9 +1606,10 @@ If a user expresses a strong need to speak with a human, asks for a direct appoi
         // --- Language Switching ---
         languageSelect.addEventListener('change', (e) => {
             currentLanguage = e.target.value;
-            chatHistory[0] = getSystemPrompt(currentLanguage); // Update system prompt with new language
-            saveToLocalStorage(); // Save selected language
-            renderChatHistory(); // Re-render chat with new language
+            // When language changes, clear chat history and re-render with new greeting
+            chatHistory = [];
+            saveToLocalStorage(); // Save selected language and empty chat history
+            renderChatHistory(); // Re-render chat with new language and initial greeting
             renderQuickActions(); // Re-render quick actions with new language
         });
 
