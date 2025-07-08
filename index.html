@@ -587,7 +587,8 @@
         .chat-section {
             width: 100%;
             display: flex;
-            justify-content: center; /* Center the chat container within the section */
+            flex-direction: column; /* Align items vertically */
+            align-items: center; /* Center the chat container within the section */
             margin-bottom: 25px; /* Space between chat and next section */
         }
 
@@ -716,6 +717,53 @@
             font-style: italic;
             color: var(--chat-loading-color);
             font-size: 0.9em;
+            display: flex; /* Use flex for dots */
+            align-items: center;
+        }
+
+        .chat-loading-indicator span {
+            animation: blink 1.4s infinite;
+            font-size: 1.5em; /* Larger dots */
+            line-height: 0; /* Adjust line height for vertical alignment */
+        }
+
+        .chat-loading-indicator span:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .chat-loading-indicator span:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes blink {
+            0%, 80%, 100% { opacity: 0; }
+            40% { opacity: 1; }
+        }
+
+        .quick-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            padding: 10px 15px;
+            justify-content: center;
+            border-top: 1px solid var(--chat-input-border);
+            background-color: var(--chat-input-bg);
+        }
+
+        .quick-actions button {
+            background-color: var(--button-bg);
+            color: var(--text-color-light);
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            margin: 0; /* Override default button margin */
+            box-shadow: 0 2px 5px var(--button-shadow);
+            border: none; /* Quick action buttons don't need borders */
+        }
+        .quick-actions button:hover {
+            background-color: var(--button-hover-bg);
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px var(--button-hover-shadow);
         }
 
 
@@ -775,6 +823,14 @@
                 font-size: 0.9em;
                 padding: 8px 12px;
             }
+            .quick-actions {
+                padding: 8px 10px;
+                gap: 8px;
+            }
+            .quick-actions button {
+                font-size: 0.75em;
+                padding: 6px 10px;
+            }
         }
     </style>
 </head>
@@ -798,11 +854,13 @@
         <div id="chatContainer" class="chat-container">
             <div class="chat-header">
                 <span>Revolut Assistant</span>
-                <!-- No toggle button needed as it's always open -->
             </div>
             <div id="chatMessages" class="chat-messages">
                 <!-- Chat messages will be added here -->
                 <!-- Initial message handled by JS renderChatHistory -->
+            </div>
+            <div id="quickActions" class="quick-actions">
+                <!-- Quick action buttons will be added here by JS -->
             </div>
             <form id="chatInputForm" class="chat-input-form">
                 <input type="text" id="chatInput" placeholder="Type your message...">
@@ -927,25 +985,27 @@
         const chatInputForm = document.getElementById('chatInputForm');
         const chatInput = document.getElementById('chatInput');
         const chatSendBtn = document.getElementById('chatSendBtn');
-        // chatToggleBtn is removed as the chat is always open now
+        const quickActionsDiv = document.getElementById('quickActions'); // New element for quick actions
 
         let goal = null;
         let events = [];
         let editingEventIndex = -1; // -1 means no event is being edited
 
         // Initial system prompt for the AI assistant
+        // This prompt is crucial for defining the AI's persona, capabilities, and escalation protocol.
         const systemPrompt = {
             role: "user",
-            parts: [{ text: `You are Revolut Assistant, a helpful, empathetic, and professional financial assistant. Your primary goal is to assist users with their 'Horizons' financial planning within this application. You can help with:
-- Explaining how to set a Horizon Goal.
-- Guiding them on how to add/edit/delete Life Events (income or expenses).
-- Clarifying how their financial trajectory is impacted by events.
-- Providing general, simple explanations about financial concepts related to planning (e.g., "What is a budget?" or "Why is long-term planning important?").
-- **Crucially, if a user expresses a strong need to speak with a human, asks for a direct appointment, or uses keywords like 'human', 'talk to someone', 'agent', 'appointment', 'schedule', 'speak to someone', 'customer service', 'urgent', 'scam', 'stolen', 'not working', 'emergency', 'fraud', 'compromised', 'report', you MUST gracefully escalate them to a human agent immediately.**
-- When escalating, confirm their request and state that a human will be in touch shortly. Provide a clear message like: "I understand this is an urgent matter. For immediate assistance with scams, fraud, or emergencies, please call our 24/7 support line at +353 1 800 123 456 (example number) or visit our dedicated security page at revolut.com/security (example URL). I am connecting you to a live agent for further assistance right away." Do NOT attempt to resolve complex personal financial issues or provide specific financial advice.
-- Always maintain a warm, clear, and unambiguous tone. Avoid jargon.
-- If a user asks something outside the scope of 'Horizons' or general financial planning, gently redirect them or offer to escalate if they seem frustrated.
-- Your responses should be concise and helpful.
+            parts: [{ text: `You are Revolut Assistant, a dedicated, empathetic, and professional financial agent for 'Revolut Horizons'. Your primary goal is to empower users to manage their financial goals and events within this application.
+**Your core capabilities include:**
+1.  **Goal Management:** Explain how to set, view, or edit their Horizon Goal (e.g., 'How do I set a goal?', 'What is my current goal?').
+2.  **Event Management:** Guide users on adding, editing, or deleting future Life Events (income or expenses) (e.g., 'How do I add an event?', 'Can I change an event?').
+3.  **Financial Impact:** Clarify how their financial trajectory is impacted by their goals and events (e.g., 'How do events affect my goal?').
+4.  **General Financial Concepts:** Provide simple, clear explanations about financial planning relevant to 'Horizons' (e.g., 'What is budgeting?', 'Why plan long-term?').
+5.  **Proactive Assistance:** Based on the user's current goals and events (if provided in the context), offer relevant suggestions or insights.
+**CRITICAL ESCALATION PROTOCOL:**
+If a user expresses a strong need to speak with a human, asks for a direct appointment, or uses keywords such as 'human', 'talk to someone', 'agent', 'appointment', 'schedule', 'speak to someone', 'customer service', 'urgent', 'scam', 'stolen', 'not working', 'emergency', 'fraud', 'compromised', 'report', you MUST gracefully escalate them to a human agent IMMEDIATELY.
+**Escalation Message:** "I understand this is an urgent matter. For immediate assistance with scams, fraud, or emergencies, please call our 24/7 support line at +353 1 800 123 456 (example number) or visit our dedicated security page at revolut.com/security (example URL). I am connecting you to a live agent for further assistance right away. Please wait for a moment while our team reviews your request."
+**Important:** Do NOT attempt to resolve complex personal financial issues, provide specific financial advice, or ask for sensitive personal information. Always maintain a warm, clear, and unambiguous tone. Avoid jargon. If a user asks something outside the scope of 'Horizons' or general financial planning, gently redirect them or offer to escalate if they seem frustrated. Keep responses concise and helpful.
 `}]
         };
 
@@ -1286,9 +1346,6 @@
         });
 
         // --- Chatbot Functions ---
-        // The toggleChat function is no longer needed as the chat is always open.
-        // The chatToggleBtn is also removed from HTML and JS.
-
         function addMessageToChat(sender, message) {
             const messageDiv = document.createElement('div');
             messageDiv.classList.add('chat-message', sender);
@@ -1310,6 +1367,47 @@
                     addMessageToChat(msg.role === 'user' ? 'user' : 'bot', msg.parts[0].text);
                 });
             }
+            renderQuickActions(); // Render quick actions after history
+        }
+
+        function renderQuickActions() {
+            quickActionsDiv.innerHTML = ''; // Clear existing buttons
+            const actions = [
+                { text: 'Set a Goal', message: 'How do I set a new Horizon Goal?' },
+                { text: 'Add an Event', message: 'I want to add a new financial event.' },
+                { text: 'View Timeline', message: 'Show me my financial timeline.' },
+                { text: 'Contact Support', message: 'I need to speak with a human agent.' }
+            ];
+
+            actions.forEach(action => {
+                const button = document.createElement('button');
+                button.textContent = action.text;
+                button.addEventListener('click', () => {
+                    addMessageToChat('user', action.message);
+                    getBotResponse(action.message);
+                });
+                quickActionsDiv.appendChild(button);
+            });
+        }
+
+        // Function to get a summary of current financial data for the LLM
+        function getFinancialSummary() {
+            let summary = "\n**Current User Financial Data:**\n";
+            if (goal) {
+                summary += `- Goal: "${goal.name}" for €${parseFloat(goal.targetAmount).toLocaleString()} by ${formatDate(goal.targetDate)}.\n`;
+            } else {
+                summary += "- No Horizon Goal set yet.\n";
+            }
+
+            if (events.length > 0) {
+                summary += "- Upcoming Events:\n";
+                events.forEach(event => {
+                    summary += `  - ${event.type === 'income' ? 'Income' : 'Expense'}: "${event.name}" of €${parseFloat(event.amount).toLocaleString()} on ${formatDate(event.date)}.\n`;
+                });
+            } else {
+                summary += "- No Life Events added yet.\n";
+            }
+            return summary;
         }
 
         async function getBotResponse(userMessage) {
@@ -1323,7 +1421,7 @@
             chatSendBtn.disabled = true; // Disable send button
             const loadingIndicator = document.createElement('div');
             loadingIndicator.classList.add('chat-loading-indicator');
-            loadingIndicator.textContent = 'Assistant is typing...';
+            loadingIndicator.innerHTML = 'Assistant is typing<span>.</span><span>.</span><span>.</span>';
             chatMessagesDiv.appendChild(loadingIndicator);
             chatMessagesDiv.scrollTop = chatMessagesDiv.scrollHeight;
 
@@ -1352,9 +1450,15 @@
 
             // If not escalating, proceed with LLM call
             try {
-                // Add user message to chat history for LLM context
-                // Ensure the system prompt is always the first element for the LLM call
-                const currentChatContext = [...chatHistory, { role: "user", parts: [{ text: userMessage }] }];
+                // Get current financial summary
+                const financialSummary = getFinancialSummary();
+
+                // Construct the prompt for the LLM, including the system prompt, financial summary, and chat history
+                const currentChatContext = [
+                    { role: "user", parts: [{ text: systemPrompt.parts[0].text + financialSummary }] }, // Combine system prompt with dynamic summary
+                    ...chatHistory.filter(msg => msg !== systemPrompt), // Exclude the original system prompt from history when sending to LLM
+                    { role: "user", parts: [{ text: userMessage }] }
+                ];
 
                 const payload = { contents: currentChatContext };
                 const apiKey = ""; // Canvas will provide this at runtime
@@ -1414,6 +1518,7 @@
             loadFromLocalStorage();
             renderGoal();
             renderEvents();
+            renderQuickActions(); // Render quick actions on initial load
 
             // Set default date for goal and event to today if not loaded from storage
             if (!goalDateInput.value) {
