@@ -622,6 +622,17 @@
             /* No cursor: pointer or toggle button for always visible */
         }
 
+        .chat-header select {
+            width: auto;
+            padding: 5px 10px;
+            font-size: 0.9em;
+            border-radius: 5px;
+            background-color: var(--input-bg);
+            color: var(--text-color-light);
+            border: 1px solid var(--input-border);
+            transition: background-color 0.5s ease, color 0.5s ease, border-color 0.5s ease;
+        }
+
         .chat-messages {
             flex-grow: 1;
             padding: 15px;
@@ -809,6 +820,10 @@
                 padding: 10px;
                 font-size: 1em;
             }
+            .chat-header select {
+                padding: 4px 8px;
+                font-size: 0.8em;
+            }
             .chat-messages {
                 padding: 10px;
                 gap: 8px;
@@ -854,6 +869,12 @@
         <div id="chatContainer" class="chat-container">
             <div class="chat-header">
                 <span>Revolut Assistant</span>
+                <select id="languageSelect">
+                    <option value="en">English</option>
+                    <option value="es">Español</option>
+                    <option value="bn">বাংলা</option>
+                    <option value="zh">中文</option>
+                </select>
             </div>
             <div id="chatMessages" class="chat-messages">
                 <!-- Chat messages will be added here -->
@@ -985,14 +1006,81 @@
         const chatInputForm = document.getElementById('chatInputForm');
         const chatInput = document.getElementById('chatInput');
         const chatSendBtn = document.getElementById('chatSendBtn');
-        const quickActionsDiv = document.getElementById('quickActions'); // New element for quick actions
+        const quickActionsDiv = document.getElementById('quickActions');
+        const languageSelect = document.getElementById('languageSelect'); // New language select
 
         let goal = null;
         let events = [];
-        let editingEventIndex = -1; // -1 means no event is being edited
+        let editingEventIndex = -1;
+
+        // Translations object for multilingual support
+        const translations = {
+            en: {
+                greeting: "Hello! I'm your Revolut Assistant. How can I help you with your financial horizons today?",
+                quickActions: [
+                    { text: 'Set a Goal', message: 'How do I set a new Horizon Goal?' },
+                    { text: 'Add an Event', message: 'I want to add a new financial event.' },
+                    { text: 'View Timeline', message: 'Show me my financial timeline.' },
+                    { text: 'Contact Support', message: 'I need to speak with a human agent.' }
+                ],
+                escalationMessage: "I understand this is an urgent matter. For immediate assistance with scams, fraud, or emergencies, please call our 24/7 support line at +353 1 800 123 456 (example number) or visit our dedicated security page at revolut.com/security (example URL). I am connecting you to a live agent for further assistance right away.",
+                modalTitle: "Connecting You to Support",
+                modalMessage: (time) => `Thanks, Margaret – your request has been received!\n\nMary from Customer Care will be with you shortly.\n(Timestamp: ${time})\n\nFor urgent issues, please use the provided contact details.`,
+                loading: "Assistant is typing",
+                apiError: "I'm sorry, I couldn't get a response right now. Please try again later.",
+                networkError: "Oops! Something went wrong. Please check your internet connection or try again later."
+            },
+            es: {
+                greeting: "¡Hola! Soy tu Asistente Revolut. ¿Cómo puedo ayudarte con tus horizontes financieros hoy?",
+                quickActions: [
+                    { text: 'Establecer una Meta', message: '¿Cómo establezco una nueva Meta de Horizonte?' },
+                    { text: 'Añadir un Evento', message: 'Quiero añadir un nuevo evento financiero.' },
+                    { text: 'Ver Cronograma', message: 'Muéstrame mi cronograma financiero.' },
+                    { text: 'Contactar Soporte', message: 'Necesito hablar con un agente humano.' }
+                ],
+                escalationMessage: "Entiendo que este es un asunto urgente. Para asistencia inmediata con estafas, fraudes o emergencias, por favor llama a nuestra línea de soporte 24/7 al +353 1 800 123 456 (número de ejemplo) o visita nuestra página de seguridad dedicada en revolut.com/security (URL de ejemplo). Te estoy conectando con un agente en vivo para más asistencia de inmediato.",
+                modalTitle: "Conectando con Soporte",
+                modalMessage: (time) => `Gracias, Margaret – ¡tu solicitud ha sido recibida!\n\nMary de Atención al Cliente se pondrá en contacto contigo en breve.\n(Hora: ${time})\n\nPara asuntos urgentes, por favor utiliza los datos de contacto proporcionados.`,
+                loading: "El asistente está escribiendo",
+                apiError: "Lo siento, no pude obtener una respuesta en este momento. Por favor, inténtalo de nuevo más tarde.",
+                networkError: "¡Ups! Algo salió mal. Por favor, revisa tu conexión a internet o inténtalo de nuevo más tarde."
+            },
+            bn: {
+                greeting: "নমস্কার! আমি আপনার রেভোলুট অ্যাসিস্ট্যান্ট। আপনার আর্থিক দিগন্ত নিয়ে আজ আমি কিভাবে সাহায্য করতে পারি?",
+                quickActions: [
+                    { text: 'একটি লক্ষ্য সেট করুন', message: 'আমি কিভাবে একটি নতুন দিগন্তের লক্ষ্য সেট করব?' },
+                    { text: 'একটি ইভেন্ট যোগ করুন', message: 'আমি একটি নতুন আর্থিক ইভেন্ট যোগ করতে চাই।' },
+                    { text: 'সময়রেখা দেখুন', message: 'আমার আর্থিক সময়রেখা দেখান।' },
+                    { text: 'সহায়তা কেন্দ্রে যোগাযোগ করুন', message: 'আমি একজন মানব এজেন্টের সাথে কথা বলতে চাই।' }
+                ],
+                escalationMessage: "আমি বুঝতে পারছি এটি একটি জরুরি বিষয়। কেলেঙ্কারি, জালিয়াতি বা জরুরি অবস্থার জন্য তাৎক্ষণিক সহায়তার জন্য, অনুগ্রহ করে আমাদের 24/7 সহায়তা লাইনে +353 1 800 123 456 (উদাহরণ নম্বর) এ কল করুন অথবা revolut.com/security (উদাহরণ URL) এ আমাদের ডেডিকেটেড নিরাপত্তা পৃষ্ঠা দেখুন। আমি আপনাকে অবিলম্বে আরও সহায়তার জন্য একজন লাইভ এজেন্টের সাথে সংযুক্ত করছি।",
+                modalTitle: "সহায়তা কেন্দ্রের সাথে সংযোগ করা হচ্ছে",
+                modalMessage: (time) => `ধন্যবাদ, মার্গারেট – আপনার অনুরোধ গৃহীত হয়েছে!\n\nগ্রাহক পরিষেবা থেকে মেরি শীঘ্রই আপনার সাথে যোগাযোগ করবেন।\n(সময়: ${time})\n\nজরুরি সমস্যার জন্য, অনুগ্রহ করে প্রদত্ত যোগাযোগের বিবরণ ব্যবহার করুন।`,
+                loading: "অ্যাসিস্ট্যান্ট টাইপ করছে",
+                apiError: "দুঃখিত, আমি এই মুহূর্তে একটি উত্তর পেতে পারিনি। অনুগ্রহ করে পরে আবার চেষ্টা করুন।",
+                networkError: "ওহ! কিছু ভুল হয়েছে। অনুগ্রহ করে আপনার ইন্টারনেট সংযোগ পরীক্ষা করুন অথবা পরে আবার চেষ্টা করুন।"
+            },
+            zh: {
+                greeting: "您好！我是您的 Revolut 助理。今天我能如何帮助您规划财务未来？",
+                quickActions: [
+                    { text: '设定目标', message: '我如何设定新的财务目标？' },
+                    { text: '添加事件', message: '我想添加一个新的财务事件。' },
+                    { text: '查看时间线', message: '显示我的财务时间线。' },
+                    { text: '联系支持', message: '我需要与人工客服交谈。' }
+                ],
+                escalationMessage: "我理解这是一个紧急问题。如需诈骗、欺诈或紧急情况的即时帮助，请拨打我们的24/7支持热线 +353 1 800 123 456（示例号码）或访问我们的专用安全页面 revolut.com/security（示例网址）。我将立即为您转接人工客服以获得进一步帮助。",
+                modalTitle: "正在连接至支持",
+                modalMessage: (time) => `谢谢，玛格丽特 – 您的请求已收到！\n\n客户服务部的玛丽将很快与您联系。\n(时间戳: ${time})\n\n如遇紧急情况，请使用提供的联系方式。`,
+                loading: "助理正在输入",
+                apiError: "抱歉，暂时无法获取回复。请稍后再试。",
+                networkError: "糟糕！出了些问题。请检查您的网络连接或稍后再试。"
+            }
+        };
+
+        let currentLanguage = localStorage.getItem('horizonsLanguage') || 'en'; // Load saved language or default to English
+        languageSelect.value = currentLanguage; // Set dropdown to current language
 
         // Initial system prompt for the AI assistant
-        // This prompt is crucial for defining the AI's persona, capabilities, and escalation protocol.
         const systemPrompt = {
             role: "user",
             parts: [{ text: `You are Revolut Assistant, a dedicated, empathetic, and professional financial agent for 'Revolut Horizons'. Your primary goal is to empower users to manage their financial goals and events within this application.
@@ -1002,6 +1090,7 @@
 3.  **Financial Impact:** Clarify how their financial trajectory is impacted by their goals and events (e.g., 'How do events affect my goal?').
 4.  **General Financial Concepts:** Provide simple, clear explanations about financial planning relevant to 'Horizons' (e.g., 'What is budgeting?', 'Why plan long-term?').
 5.  **Proactive Assistance:** Based on the user's current goals and events (if provided in the context), offer relevant suggestions or insights.
+**Multilingual Support:** You are capable of understanding and responding in multiple languages. If the user indicates a preferred language or you detect it, please respond in that language. Otherwise, use English.
 **CRITICAL ESCALATION PROTOCOL:**
 If a user expresses a strong need to speak with a human, asks for a direct appointment, or uses keywords such as 'human', 'talk to someone', 'agent', 'appointment', 'schedule', 'speak to someone', 'customer service', 'urgent', 'scam', 'stolen', 'not working', 'emergency', 'fraud', 'compromised', 'report', you MUST gracefully escalate them to a human agent IMMEDIATELY.
 **Escalation Message:** "I understand this is an urgent matter. For immediate assistance with scams, fraud, or emergencies, please call our 24/7 support line at +353 1 800 123 456 (example number) or visit our dedicated security page at revolut.com/security (example URL). I am connecting you to a live agent for further assistance right away. Please wait for a moment while our team reviews your request."
@@ -1061,6 +1150,7 @@ If a user expresses a strong need to speak with a human, asks for a direct appoi
             const savableChatHistory = chatHistory.filter(msg => msg !== systemPrompt);
             localStorage.setItem('horizonsChatHistory', JSON.stringify(savableChatHistory));
             localStorage.setItem('horizonsIsHumanEscalated', JSON.stringify(isHumanEscalated));
+            localStorage.setItem('horizonsLanguage', currentLanguage); // Save current language
         }
 
         function loadFromLocalStorage() {
@@ -1069,6 +1159,7 @@ If a user expresses a strong need to speak with a human, asks for a direct appoi
             const storedTheme = localStorage.getItem('horizonsTheme');
             const storedChatHistory = localStorage.getItem('horizonsChatHistory');
             const storedIsHumanEscalated = localStorage.getItem('horizonsIsHumanEscalated');
+            const storedLanguage = localStorage.getItem('horizonsLanguage');
 
             if (storedGoal) {
                 goal = JSON.parse(storedGoal);
@@ -1091,6 +1182,11 @@ If a user expresses a strong need to speak with a human, asks for a direct appoi
             if (storedTheme) {
                 document.body.dataset.theme = storedTheme;
                 themeSelect.value = storedTheme;
+            }
+
+            if (storedLanguage) {
+                currentLanguage = storedLanguage;
+                languageSelect.value = currentLanguage;
             }
 
             if (storedChatHistory) {
@@ -1330,6 +1426,8 @@ If a user expresses a strong need to speak with a human, asks for a direct appoi
                 chatHistory = [systemPrompt]; // Reset chat history to initial system prompt
                 isHumanEscalated = false; // Reset escalation flag
                 editingEventIndex = -1;
+                currentLanguage = 'en'; // Reset language to English
+                languageSelect.value = 'en';
                 renderGoal();
                 renderEvents();
                 renderChatHistory(); // Re-render chat to show initial bot message
@@ -1361,7 +1459,7 @@ If a user expresses a strong need to speak with a human, asks for a direct appoi
 
             if (displayableHistory.length === 0) {
                 // Add initial bot message if history is empty (after filtering system prompt)
-                addMessageToChat('bot', "Hello! I'm your Revolut Assistant. How can I help you with your financial horizons today?");
+                addMessageToChat('bot', translations[currentLanguage].greeting);
             } else {
                 displayableHistory.forEach(msg => {
                     addMessageToChat(msg.role === 'user' ? 'user' : 'bot', msg.parts[0].text);
@@ -1372,12 +1470,7 @@ If a user expresses a strong need to speak with a human, asks for a direct appoi
 
         function renderQuickActions() {
             quickActionsDiv.innerHTML = ''; // Clear existing buttons
-            const actions = [
-                { text: 'Set a Goal', message: 'How do I set a new Horizon Goal?' },
-                { text: 'Add an Event', message: 'I want to add a new financial event.' },
-                { text: 'View Timeline', message: 'Show me my financial timeline.' },
-                { text: 'Contact Support', message: 'I need to speak with a human agent.' }
-            ];
+            const actions = translations[currentLanguage].quickActions;
 
             actions.forEach(action => {
                 const button = document.createElement('button');
@@ -1412,8 +1505,6 @@ If a user expresses a strong need to speak with a human, asks for a direct appoi
 
         async function getBotResponse(userMessage) {
             if (isHumanEscalated || isAILoading) {
-                // If already escalated or loading, prevent new AI responses.
-                // We can optionally add a message here to indicate that a human agent is already being connected.
                 return;
             }
 
@@ -1421,13 +1512,13 @@ If a user expresses a strong need to speak with a human, asks for a direct appoi
             chatSendBtn.disabled = true; // Disable send button
             const loadingIndicator = document.createElement('div');
             loadingIndicator.classList.add('chat-loading-indicator');
-            loadingIndicator.innerHTML = 'Assistant is typing<span>.</span><span>.</span><span>.</span>';
+            loadingIndicator.innerHTML = `${translations[currentLanguage].loading}<span>.</span><span>.</span><span>.</span>`;
             chatMessagesDiv.appendChild(loadingIndicator);
             chatMessagesDiv.scrollTop = chatMessagesDiv.scrollHeight;
 
             // Check for escalation keywords
             const lowerCaseMessage = userMessage.toLowerCase();
-            const escalationKeywords = ['human', 'talk', 'agent', 'appointment', 'schedule', 'speak to someone', 'customer service', 'urgent', 'scam', 'stolen', 'not working', 'emergency', 'fraud', 'compromised', 'report'];
+            const escalationKeywords = ['human', 'talk', 'agent', 'appointment', 'schedule', 'speak to someone', 'customer service', 'urgent', 'scam', 'stolen', 'not working', 'emergency', 'fraud', 'compromised', 'report', 'live chat'];
             const needsEscalation = escalationKeywords.some(keyword => lowerCaseMessage.includes(keyword));
 
             if (needsEscalation) {
@@ -1435,13 +1526,13 @@ If a user expresses a strong need to speak with a human, asks for a direct appoi
                 saveToLocalStorage(); // Save escalation state
 
                 chatMessagesDiv.removeChild(loadingIndicator);
-                addMessageToChat('bot', "I understand this is an urgent matter. For immediate assistance with scams, fraud, or emergencies, please call our 24/7 support line at +353 1 800 123 456 (example number) or visit our dedicated security page at revolut.com/security (example URL). I am connecting you to a live agent for further assistance right away.");
+                addMessageToChat('bot', translations[currentLanguage].escalationMessage);
                 // Show the human escalation modal
                 const now = new Date();
                 const currentTime = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
                 showModal(
-                    'Connecting You to Support',
-                    `Thanks, Margaret – your request has been received!\n\nMary from Customer Care will be with you shortly.\n(Timestamp: ${currentTime})\n\nFor urgent issues, please use the provided contact details.`
+                    translations[currentLanguage].modalTitle,
+                    translations[currentLanguage].modalMessage(currentTime)
                 );
                 isAILoading = false;
                 chatSendBtn.disabled = false;
@@ -1454,10 +1545,13 @@ If a user expresses a strong need to speak with a human, asks for a direct appoi
                 const financialSummary = getFinancialSummary();
 
                 // Construct the prompt for the LLM, including the system prompt, financial summary, and chat history
+                // Append language instruction to the user's message for the LLM
+                const userMessageWithLang = userMessage + ` [Please respond in ${languageSelect.options[languageSelect.selectedIndex].text} (${currentLanguage} language code)].`;
+
                 const currentChatContext = [
                     { role: "user", parts: [{ text: systemPrompt.parts[0].text + financialSummary }] }, // Combine system prompt with dynamic summary
                     ...chatHistory.filter(msg => msg !== systemPrompt), // Exclude the original system prompt from history when sending to LLM
-                    { role: "user", parts: [{ text: userMessage }] }
+                    { role: "user", parts: [{ text: userMessageWithLang }] }
                 ];
 
                 const payload = { contents: currentChatContext };
@@ -1478,16 +1572,16 @@ If a user expresses a strong need to speak with a human, asks for a direct appoi
                     result.candidates[0].content.parts.length > 0) {
                     const botResponseText = result.candidates[0].content.parts[0].text;
                     addMessageToChat('bot', botResponseText);
-                    chatHistory.push({ role: "user", parts: [{ text: userMessage }] }); // Add user message to local history *after* API call
+                    chatHistory.push({ role: "user", parts: [{ text: userMessage }] }); // Add original user message to local history
                     chatHistory.push({ role: "model", parts: [{ text: botResponseText }] }); // Add bot response to local history
                     saveToLocalStorage(); // Save updated chat history
                 } else {
-                    addMessageToChat('bot', "I'm sorry, I couldn't get a response right now. Please try again later.");
+                    addMessageToChat('bot', translations[currentLanguage].apiError);
                     console.error("Unexpected API response structure:", result);
                 }
             } catch (error) {
                 chatMessagesDiv.removeChild(loadingIndicator); // Remove loading indicator
-                addMessageToChat('bot', "Oops! Something went wrong. Please check your internet connection or try again later.");
+                addMessageToChat('bot', translations[currentLanguage].networkError);
                 console.error("Error fetching AI response:", error);
             } finally {
                 isAILoading = false;
@@ -1507,6 +1601,15 @@ If a user expresses a strong need to speak with a human, asks for a direct appoi
             }
         });
 
+        // --- Language Switching ---
+        languageSelect.addEventListener('change', (e) => {
+            currentLanguage = e.target.value;
+            saveToLocalStorage(); // Save selected language
+            renderChatHistory(); // Re-render chat with new language
+            renderQuickActions(); // Re-render quick actions with new language
+        });
+
+
         // --- Theme Switching ---
         themeSelect.addEventListener('change', (e) => {
             document.body.dataset.theme = e.target.value;
@@ -1518,7 +1621,7 @@ If a user expresses a strong need to speak with a human, asks for a direct appoi
             loadFromLocalStorage();
             renderGoal();
             renderEvents();
-            renderQuickActions(); // Render quick actions on initial load
+            renderChatHistory(); // Ensure chat history is rendered with correct language on load
 
             // Set default date for goal and event to today if not loaded from storage
             if (!goalDateInput.value) {
