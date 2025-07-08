@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Revolut Horizons: Your Financial Navigator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        /* CSS: Celestial Aura Aesthetic */
+        :root {
+            --dark-purple: #1a0a2e;
+            --deep-space-blue: #0f0a20;
+            --glowing-teal: #00ffcc;
+            --soft-pink: #ff66b2;
+            --light-purple: #8e44ad;
+            --text-color-light: #e0e0e0;
+            --border-glow: rgba(0, 255, 204, 0.5);
+            --button-bg: #4a2d73;
+            --button-hover: #6a40a3;
+            --input-bg: #2b1c40;
+            --card-bg: #251838;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, var(--deep-space-blue) 0%, var(--dark-purple) 100%);
+            color: var(--text-color-light);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+            font-size: 18px; /* Base font size for accessibility */
+        }
+
+        /* Subtle background nebula effect */
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 10% 20%, rgba(255,102,178,0.1) 0%, transparent 50%),
+                        radial-gradient(circle at 90% 80%, rgba(0,255,204,0.1) 0%, transparent 50%);
+            z-index: -1;
+            opacity: 0.8;
+        }
+
+        header {
+            width: 100%;
+            max-width: 900px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 10;
+        }
+
+        header h1 {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--glowing-teal);
+            font-size: 2.5em; /* 2.5 * 18px = 45px */
+            text-shadow: 0 0 15px var(--glowing-teal), 0 0 30px var(--glowing-teal);
+            letter-spacing: 2px;
+            margin: 0;
+        }
+
+        .container {
+            background-color: var(--card-bg);
+            border-radius: 15px;
+            box-shadow: 0 0 30px var(--border-glow);
+            padding: 30px;
+            margin: 20px auto;
+            width: 90%;
+            max-width: 800px;
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+            border: 1px solid var(--light-purple);
+            animation: fadeIn 1s ease-out;
+            position: relative;
+            z-index: 5;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h2 {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--soft-pink);
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 1.8em; /* 1.8 * 18px = 32.4px */
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--glowing-teal);
+            font-weight: bold;
+            font-size: 1.1em; /* 1.1 * 18px = 19.8px */
+        }
+
+        input[type="text"],
+        input[type="number"],
+        input[type="date"],
+        select {
+            width: calc(100% - 20px);
+            padding: 12px;
+            margin-top: 5px;
+            border: 1px solid var(--light-purple);
+            border-radius: 8px;
+            background-color: var(--input-bg);
+            color: var(--text-color-light);
+            font-size: 1em; /* 1 * 18px = 18px */
+            box-shadow: inset 0 0 8px rgba(0, 255, 204, 0.2);
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        input[type="text"]:focus,
+        input[type="number"]:focus,
+        input[type="date"]:focus,
+        select:focus {
+            border-color: var(--glowing-teal);
+            box-shadow: 0 0 15px var(--glowing-teal), inset 0 0 10px rgba(0, 255, 204, 0.4);
+            outline: none;
+        }
+
+        button {
+            background-color: var(--button-bg);
+            color: var(--text-color-light);
+            padding: 14px 25px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.1em; /* 1.1 * 18px = 19.8px */
+            font-weight: bold;
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+            display: block;
+            width: fit-content;
+            margin: 20px auto 0;
+            box-shadow: 0 0 10px rgba(74, 45, 115, 0.5);
+            border: 1px solid var(--light-purple);
+        }
+
+        button:hover {
+            background-color: var(--button-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 0 20px var(--soft-pink);
+        }
+
+        .goal-display {
+            background-color: var(--input-bg);
+            border: 1px solid var(--glowing-teal);
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 0 15px var(--border-glow);
+            animation: pulseGlow 2s infinite alternate;
+        }
+
+        @keyframes pulseGlow {
+            from { box-shadow: 0 0 15px var(--border-glow); }
+            to { box-shadow: 0 0 25px var(--glowing-teal); }
+        }
+
+        .goal-display p {
+            margin: 10px 0;
+            font-size: 1.2em; /* 1.2 * 18px = 21.6px */
+            color: var(--text-color-light);
+        }
+
+        .goal-display strong {
+            color: var(--soft-pink);
+            font-size: 1.3em; /* 1.3 * 18px = 23.4px */
+        }
+
+        .goal-impact {
+            margin-top: 15px;
+            font-size: 1.1em; /* 1.1 * 18px = 19.8px */
+            color: var(--glowing-teal);
+            font-weight: bold;
+        }
+
+        .timeline {
+            margin-top: 30px;
+        }
+
+        .event-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            position: relative;
+            border-left: 2px dashed var(--light-purple); /* The "horizon" line */
+            padding-left: 20px;
+        }
+
+        .event-list li {
+            background-color: var(--card-bg);
+            border: 1px solid var(--soft-pink);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            position: relative;
+            box-shadow: 0 0 15px rgba(255, 102, 178, 0.3);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .event-list li::before {
+            content: '';
+            position: absolute;
+            left: -28px; /* Align with dashed line */
+            top: 50%;
+            transform: translateY(-50%);
+            width: 12px;
+            height: 12px;
+            background-color: var(--glowing-teal);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--glowing-teal), 0 0 20px var(--glowing-teal);
+        }
+
+        .event-list li .event-details {
+            flex-grow: 1;
+            font-size: 1em; /* 1 * 18px = 18px */
+        }
+
+        .event-list li .event-details strong {
+            color: var(--glowing-teal);
+            font-size: 1.1em; /* 1.1 * 18px = 19.8px */
+        }
+
+        .event-list li .event-amount {
+            font-weight: bold;
+            font-size: 1.1em; /* 1.1 * 18px = 19.8px */
+        }
+
+        .event-list li.expense .event-amount {
+            color: var(--soft-pink); /* Reddish for expenses */
+        }
+
+        .event-list li.income .event-amount {
+            color: var(--glowing-teal); /* Greenish for income */
+        }
+
+        .event-list button {
+            background: none;
+            border: none;
+            color: var(--soft-pink);
+            font-size: 1.2em;
+            cursor: pointer;
+            margin-left: 15px;
+            transition: color 0.3s ease, transform 0.2s ease;
+            padding: 5px; /* Touch friendly */
+            width: 30px; /* Touch friendly */
+            height: 30px; /* Touch friendly */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .event-list button:hover {
+            color: white;
+            transform: scale(1.1);
+        }
+
+        .no-events, .no-goal {
+            text-align: center;
+            color: var(--light-purple);
+            font-style: italic;
+            padding: 20px;
+        }
+
+        .talk-to-human {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background-color: var(--glowing-teal);
+            color: var(--deep-space-blue);
+            border-radius: 50px;
+            padding: 15px 25px;
+            font-size: 1.1em;
+            font-weight: bold;
+            box-shadow: 0 0 20px var(--glowing-teal), 0 0 40px var(--glowing-teal);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+            z-index: 100;
+            border: none; /* Ensure no default button border */
+        }
+
+        .talk-to-human:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0 30px var(--glowing-teal), 0 0 60px var(--glowing-teal);
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 600px) {
+            header h1 {
+                font-size: 2em;
+            }
+            .container {
+                padding: 20px;
+                margin: 15px auto;
+            }
+            label, input, select, button, .goal-display p, .event-list li .event-details {
+                font-size: 0.9em; /* Adjust base font size slightly */
+            }
+            .talk-to-human {
+                bottom: 20px;
+                right: 20px;
+                padding: 12px 20px;
+                font-size: 1em;
+            }
+            .event-list li {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .event-list li .event-amount {
+                margin-top: 5px;
+            }
+            .event-list button {
+                position: absolute;
+                top: 10px;
+                right: 10px;
+                margin-left: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Revolut Horizons</h1>
+        <p>Your Personal Financial Navigator</p>
+    </header>
+
+    <main class="container">
+        <section id="goal-setting">
+            <h2>Set Your Horizon Goal</h2>
+            <div class="form-group">
+                <label for="goalName">What are you saving for?</label>
+                <input type="text" id="goalName" placeholder="e.g., House Down Payment">
+            </div>
+            <div class="form-group">
+                <label for="goalAmount">Target Amount (€):</label>
+                <input type="number" id="goalAmount" min="0" step="0.01" value="0">
+            </div>
+            <div class="form-group">
+                <label for="goalDate">By when do you want to achieve it?</label>
+                <input type="date" id="goalDate">
+            </div>
+            <button id="saveGoalBtn">Set My Goal</button>
+        </section>
+
+        <section id="current-goal">
+            <h2>Your Current Horizon</h2>
+            <div id="goalDisplay" class="goal-display" style="display: none;">
+                <p><strong>Goal:</strong> <span id="displayGoalName"></span></p>
+                <p><strong>Target:</strong> €<span id="displayGoalAmount"></span> by <span id="displayGoalDate"></span></p>
+                <p class="goal-impact">Projected Completion: <strong id="projectedGoalDate"></strong></p>
+            </div>
+            <p id="noGoalMessage" class="no-goal">No horizon goal set yet. Set one above to begin your journey!</p>
+        </section>
+
+        <section id="add-event">
+            <h2>Add a Future Life Event</h2>
+            <div class="form-group">
+                <label for="eventName">What is this event?</label>
+                <input type="text" id="eventName" placeholder="e.g., Dream Vacation, Project Bonus">
+            </div>
+            <div class="form-group">
+                <label for="eventType">Type:</label>
+                <select id="eventType">
+                    <option value="expense">Upcoming Expense</option>
+                    <option value="income">Incoming Funds</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="eventAmount">Amount (€):</label>
+                <input type="number" id="eventAmount" min="0" step="0.01" value="0">
+            </div>
+            <div class="form-group">
+                <label for="eventDate">When will this happen?</label>
+                <input type="date" id="eventDate">
+            </div>
+            <button id="addEventBtn">Add Event to Timeline</button>
+        </section>
+
+        <section id="timeline-view">
+            <h2>Your Financial Timeline</h2>
+            <ul id="eventList" class="event-list">
+                <!-- Events will be dynamically added here -->
+            </ul>
+            <p id="noEventsMessage" class="no-events">No events added yet. Add some to see their impact!</p>
+        </section>
+    </main>
+
+    <button class="talk-to-human" onclick="talkToHuman()">Need Help? Talk to us.</button>
+
+    <script>
+        // JavaScript Logic
+        const goalNameInput = document.getElementById('goalName');
+        const goalAmountInput = document.getElementById('goalAmount');
+        const goalDateInput = document.getElementById('goalDate');
+        const saveGoalBtn = document.getElementById('saveGoalBtn');
+
+        const displayGoalName = document.getElementById('displayGoalName');
+        const displayGoalAmount = document.getElementById('displayGoalAmount');
+        const displayGoalDate = document.getElementById('displayGoalDate');
+        const projectedGoalDate = document.getElementById('projectedGoalDate');
+        const goalDisplayDiv = document.getElementById('goalDisplay');
+        const noGoalMessage = document.getElementById('noGoalMessage');
+
+        const eventNameInput = document.getElementById('eventName');
+        const eventTypeInput = document.getElementById('eventType');
+        const eventAmountInput = document.getElementById('eventAmount');
+        const eventDateInput = document.getElementById('eventDate');
+        const addEventBtn = document.getElementById('addEventBtn');
+        const eventListUl = document.getElementById('eventList');
+        const noEventsMessage = document.getElementById('noEventsMessage');
+
+        let goal = null;
+        let events = [];
+
+        // --- LocalStorage Functions ---
+        function saveToLocalStorage() {
+            localStorage.setItem('horizonsGoal', JSON.stringify(goal));
+            localStorage.setItem('horizonsEvents', JSON.stringify(events));
+        }
+
+        function loadFromLocalStorage() {
+            const storedGoal = localStorage.getItem('horizonsGoal');
+            const storedEvents = localStorage.getItem('horizonsEvents');
+
+            if (storedGoal) {
+                goal = JSON.parse(storedGoal);
+                // Ensure date string is converted back to Date object for calculations
+                if (goal && goal.targetDate) {
+                    goal.targetDate = new Date(goal.targetDate);
+                }
+            }
+
+            if (storedEvents) {
+                events = JSON.parse(storedEvents);
+                // Ensure date strings are converted back to Date objects
+                events.forEach(event => {
+                    if (event.date) {
+                        event.date = new Date(event.date);
+                    }
+                });
+            }
+        }
+
+        // --- Date Formatting Helper ---
+        function formatDate(date) {
+            if (!date) return 'N/A';
+            const options = { year: 'numeric', month: 'long', day: 'numeric' };
+            return new Date(date).toLocaleDateString(undefined, options);
+        }
+
+        // --- Goal Calculation Logic ---
+        function calculateProjectedGoalDate() {
+            if (!goal || !goal.targetAmount || !goal.targetDate) {
+                projectedGoalDate.textContent = 'Set your goal to see impact.';
+                return;
+            }
+
+            const initialGoalAmount = parseFloat(goal.targetAmount);
+            const initialGoalDate = new Date(goal.targetDate);
+            const today = new Date();
+            today.setHours(0, 0, 0, 0); // Normalize today to start of day
+
+            // Calculate initial months to goal
+            const diffTimeInitial = initialGoalDate.getTime() - today.getTime();
+            const initialDaysToGoal = diffTimeInitial / (1000 * 60 * 60 * 24);
+
+            if (initialDaysToGoal <= 0) { // If goal date is in past or today
+                projectedGoalDate.textContent = 'Goal date is in the past!';
+                return;
+            }
+
+            // Sum up net impact of all events
+            let netEventImpact = 0;
+            events.forEach(event => {
+                if (event.type === 'income') {
+                    netEventImpact += parseFloat(event.amount);
+                } else if (event.type === 'expense') {
+                    netEventImpact -= parseFloat(event.amount);
+                }
+            });
+
+            const remainingAmountToSave = initialGoalAmount - netEventImpact;
+
+            if (remainingAmountToSave <= 0) {
+                projectedGoalDate.textContent = `Achieved! ${formatDate(today)}`;
+                projectedGoalDate.style.color = 'var(--glowing-teal)'; // Using string literal for CSS variable
+                return;
+            }
+
+            // Simple proportionality for prototype:
+            // If net impact is positive, goal date moves earlier.
+            // If net impact is negative, goal date moves later.
+            // Let's assume a baseline daily saving rate from the original goal.
+            const assumedDailySavingRate = initialGoalAmount / initialDaysToGoal;
+
+            if (assumedDailySavingRate <= 0) { // Prevent division by zero if goal is 0 or negative
+                projectedGoalDate.textContent = 'Cannot calculate impact (Zero/Negative Goal Amount).';
+                return;
+            }
+
+            const newDaysToGoal = remainingAmountToSave / assumedDailySavingRate;
+            const newProjectedDate = new Date(today.getTime() + newDaysToGoal * (1000 * 60 * 60 * 24));
+
+            projectedGoalDate.textContent = formatDate(newProjectedDate);
+
+            // Give visual feedback based on change
+            const diffDaysProjected = newProjectedDate.getTime() - initialGoalDate.getTime();
+            if (Math.abs(diffDaysProjected) < 10 * (1000 * 60 * 60 * 24)) { // Within 10 days, consider "on track"
+                projectedGoalDate.style.color = 'var(--glowing-teal)';
+            } else if (diffDaysProjected < 0) { // Earlier
+                projectedGoalDate.style.color = 'var(--glowing-teal)';
+            } else { // Later
+                projectedGoalDate.style.color = 'var(--soft-pink)';
+            }
+        }
+
+
+        // --- Render Functions ---
+        function renderGoal() {
+            if (goal) {
+                displayGoalName.textContent = goal.name;
+                displayGoalAmount.textContent = parseFloat(goal.targetAmount).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                displayGoalDate.textContent = formatDate(goal.targetDate);
+                goalDisplayDiv.style.display = 'block';
+                noGoalMessage.style.display = 'none';
+                calculateProjectedGoalDate();
+            } else {
+                goalDisplayDiv.style.display = 'none';
+                noGoalMessage.style.display = 'block';
+            }
+        }
+
+        function renderEvents() {
+            eventListUl.innerHTML = '';
+            if (events.length === 0) {
+                noEventsMessage.style.display = 'block';
+                return;
+            }
+            noEventsMessage.style.display = 'none';
+
+            // Sort events by date
+            events.sort((a, b) => new Date(a.date) - new Date(b.date));
+
+            events.forEach((event, index) => {
+                const listItem = document.createElement('li');
+                listItem.classList.add(event.type); // 'income' or 'expense'
+                listItem.innerHTML = `
+                    <div class="event-details">
+                        <strong>${event.name}</strong> (${formatDate(event.date)})
+                    </div>
+                    <span class="event-amount">${event.type === 'income' ? '+' : '-'}€${parseFloat(event.amount).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                    <button data-index="${index}">&#x2715;</button> <!-- Unicode 'X' for delete -->
+                `;
+                eventListUl.appendChild(listItem);
+            });
+            calculateProjectedGoalDate(); // Recalculate projection after rendering
+        }
+
+        // --- Event Handlers ---
+        saveGoalBtn.addEventListener('click', () => {
+            const name = goalNameInput.value.trim();
+            const amount = parseFloat(goalAmountInput.value);
+            const date = goalDateInput.value;
+
+            if (name && amount > 0 && date) {
+                goal = {
+                    name: name,
+                    targetAmount: amount,
+                    targetDate: new Date(date)
+                };
+                saveToLocalStorage();
+                alert('Horizon Goal set successfully!'); // Using alert for simplicity as per previous instruction
+                renderGoal();
+            } else {
+                alert('Please fill in all goal details correctly (Goal name, Amount > 0, and Date).');
+            }
+        });
+
+        addEventBtn.addEventListener('click', () => {
+            const name = eventNameInput.value.trim();
+            const type = eventTypeInput.value;
+            const amount = parseFloat(eventAmountInput.value);
+            const date = eventDateInput.value;
+
+            if (name && amount >= 0 && date) {
+                events.push({
+                    name: name,
+                    type: type,
+                    amount: amount,
+                    date: new Date(date) // Store as Date object for sorting/calculation
+                });
+                saveToLocalStorage();
+                alert('Event added to your timeline!'); // Using alert for simplicity
+                renderEvents();
+                // Clear form fields
+                eventNameInput.value = '';
+                eventAmountInput.value = '0';
+                eventDateInput.value = '';
+            } else {
+                alert('Please fill in all event details correctly (Event name, Amount >= 0, and Date).');
+            }
+        });
+
+        eventListUl.addEventListener('click', (e) => {
+            if (e.target.tagName === 'BUTTON') {
+                const index = parseInt(e.target.dataset.index);
+                // Using confirm for simplicity as per previous instruction
+                if (confirm('Are you sure you want to remove this event?')) {
+                    events.splice(index, 1);
+                    saveToLocalStorage();
+                    renderEvents();
+                    alert('Event removed.');
+                }
+            }
+        });
+
+        function talkToHuman() {
+            // Margaret's persona: "Human reassurance in high-stakes moments"
+            // User requirements: "Must offer a clearly visible, one-click option to request human help at any time."
+            // "Must deliver an immediate confirmation of receipt (visual + text). Example: 'Thanks, Margaret—we're on it.'"
+            // "Must display human names/roles (e.g., 'Mary from Customer Care') and timestamps to create transparency."
+            const now = new Date();
+            const currentTime = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+            alert(`Thanks, Margaret – your request has been received!\n\nMary from Customer Care will be with you shortly.\n(Timestamp: ${currentTime})`);
+            // In a real app, this would trigger a live chat, call, or ticket creation.
+        }
+
+        // --- Initial Load ---
+        document.addEventListener('DOMContentLoaded', () => {
+            loadFromLocalStorage();
+            renderGoal();
+            renderEvents();
+
+            // Set default date for goal and event to today
+            const today = new Date();
+            const yyyy = today.getFullYear();
+            const mm = String(today.getMonth() + 1).padStart(2, '0'); // Months are 0-indexed
+            const dd = String(today.getDate()).padStart(2, '0');
+            const todayString = `${yyyy}-${mm}-${dd}`;
+            goalDateInput.value = todayString;
+            eventDateInput.value = todayString;
+        });
+    </script>
+</body>
+</html>
