@@ -1081,24 +1081,29 @@
         languageSelect.value = currentLanguage; // Set dropdown to current language
 
         // Initial system prompt for the AI assistant
-        const systemPrompt = {
-            role: "user",
-            parts: [{ text: `You are Revolut Assistant, a dedicated, empathetic, and professional financial agent for 'Revolut Horizons'. Your primary goal is to empower users to manage their financial goals and events within this application.
+        // This prompt is crucial for defining the AI's persona, capabilities, and escalation protocol.
+        const getSystemPrompt = (lang) => {
+            const langName = languageSelect.options[languageSelect.selectedIndex].text;
+            return {
+                role: "user",
+                parts: [{ text: `You are Revolut Assistant, a dedicated, empathetic, and professional financial agent for 'Revolut Horizons'. Your primary goal is to empower users to manage their financial goals and events within this application.
 **Your core capabilities include:**
 1.  **Goal Management:** Explain how to set, view, or edit their Horizon Goal (e.g., 'How do I set a goal?', 'What is my current goal?').
 2.  **Event Management:** Guide users on adding, editing, or deleting future Life Events (income or expenses) (e.g., 'How do I add an event?', 'Can I change an event?').
 3.  **Financial Impact:** Clarify how their financial trajectory is impacted by their goals and events (e.g., 'How do events affect my goal?').
 4.  **General Financial Concepts:** Provide simple, clear explanations about financial planning relevant to 'Horizons' (e.g., 'What is budgeting?', 'Why plan long-term?').
 5.  **Proactive Assistance:** Based on the user's current goals and events (if provided in the context), offer relevant suggestions or insights.
-**Multilingual Support:** You are capable of understanding and responding in multiple languages. If the user indicates a preferred language or you detect it, please respond in that language. Otherwise, use English.
+**Multilingual Support:** You are capable of understanding and responding in multiple languages. The current user's preferred language is ${langName} (${lang} language code). Please respond *only* in ${langName}.
 **CRITICAL ESCALATION PROTOCOL:**
 If a user expresses a strong need to speak with a human, asks for a direct appointment, or uses keywords such as 'human', 'talk to someone', 'agent', 'appointment', 'schedule', 'speak to someone', 'customer service', 'urgent', 'scam', 'stolen', 'not working', 'emergency', 'fraud', 'compromised', 'report', you MUST gracefully escalate them to a human agent IMMEDIATELY.
 **Escalation Message:** "I understand this is an urgent matter. For immediate assistance with scams, fraud, or emergencies, please call our 24/7 support line at +353 1 800 123 456 (example number) or visit our dedicated security page at revolut.com/security (example URL). I am connecting you to a live agent for further assistance right away. Please wait for a moment while our team reviews your request."
 **Important:** Do NOT attempt to resolve complex personal financial issues, provide specific financial advice, or ask for sensitive personal information. Always maintain a warm, clear, and unambiguous tone. Avoid jargon. If a user asks something outside the scope of 'Horizons' or general financial planning, gently redirect them or offer to escalate if they seem frustrated. Keep responses concise and helpful.
 `}]
+            };
         };
 
-        let chatHistory = [systemPrompt]; // Stores chat messages for display and LLM context
+        let chatHistory = [getSystemPrompt(currentLanguage)]; // Initialize with system prompt for current language
+
         let isHumanEscalated = false; // Flag to stop AI responses after escalation
         let isAILoading = false; // Flag to prevent multiple AI requests
 
@@ -1147,7 +1152,7 @@ If a user expresses a strong need to speak with a human, asks for a direct appoi
             localStorage.setItem('horizonsEvents', JSON.stringify(events));
             localStorage.setItem('horizonsTheme', document.body.dataset.theme);
             // Filter out the system prompt before saving chat history
-            const savableChatHistory = chatHistory.filter(msg => msg !== systemPrompt);
+            const savableChatHistory = chatHistory.filter(msg => msg.role !== 'user' || msg.parts[0].text.indexOf('You are Revolut Assistant') === -1);
             localStorage.setItem('horizonsChatHistory', JSON.stringify(savableChatHistory));
             localStorage.setItem('horizonsIsHumanEscalated', JSON.stringify(isHumanEscalated));
             localStorage.setItem('horizonsLanguage', currentLanguage); // Save current language
@@ -1191,7 +1196,8 @@ If a user expresses a strong need to speak with a human, asks for a direct appoi
 
             if (storedChatHistory) {
                 // Prepend the system prompt to the loaded history
-                chatHistory = [systemPrompt, ...JSON.parse(storedChatHistory)];
+                // Re-initialize chatHistory with the dynamic system prompt and then append loaded history
+                chatHistory = [getSystemPrompt(currentLanguage), ...JSON.parse(storedChatHistory)];
                 renderChatHistory();
             } else {
                 // If no history, just render the initial bot message
@@ -1423,7 +1429,7 @@ If a user expresses a strong need to speak with a human, asks for a direct appoi
                 localStorage.clear();
                 goal = null;
                 events = [];
-                chatHistory = [systemPrompt]; // Reset chat history to initial system prompt
+                chatHistory = [getSystemPrompt(currentLanguage)]; // Reset chat history to initial system prompt
                 isHumanEscalated = false; // Reset escalation flag
                 editingEventIndex = -1;
                 currentLanguage = 'en'; // Reset language to English
@@ -1454,8 +1460,8 @@ If a user expresses a strong need to speak with a human, asks for a direct appoi
 
         function renderChatHistory() {
             chatMessagesDiv.innerHTML = ''; // Clear existing messages
-            // Only display user and model messages, skip the system prompt
-            const displayableHistory = chatHistory.filter(msg => msg.role === 'user' || msg.role === 'model');
+            // Only display user and model messages, skip the system prompt (which is at index 0)
+            const displayableHistory = chatHistory.slice(1); // Start from index 1 to skip the system prompt
 
             if (displayableHistory.length === 0) {
                 // Add initial bot message if history is empty (after filtering system prompt)
@@ -1505,6 +1511,7 @@ If a user expresses a strong need to speak with a human, asks for a direct appoi
 
         async function getBotResponse(userMessage) {
             if (isHumanEscalated || isAILoading) {
+                console.log("Bot not responding: Human escalated or AI already loading.");
                 return;
             }
 
@@ -1515,6 +1522,10 @@ If a user expresses a strong need to speak with a human, asks for a direct appoi
             loadingIndicator.innerHTML = `${translations[currentLanguage].loading}<span>.</span><span>.</span><span>.</span>`;
             chatMessagesDiv.appendChild(loadingIndicator);
             chatMessagesDiv.scrollTop = chatMessagesDiv.scrollHeight;
+
+            // Add user message to chat history immediately for context in subsequent calls
+            chatHistory.push({ role: "user", parts: [{ text: userMessage }] });
+            saveToLocalStorage(); // Save updated chat history immediately
 
             // Check for escalation keywords
             const lowerCaseMessage = userMessage.toLowerCase();
@@ -1541,20 +1552,19 @@ If a user expresses a strong need to speak with a human, asks for a direct appoi
 
             // If not escalating, proceed with LLM call
             try {
-                // Get current financial summary
                 const financialSummary = getFinancialSummary();
 
                 // Construct the prompt for the LLM, including the system prompt, financial summary, and chat history
-                // Append language instruction to the user's message for the LLM
-                const userMessageWithLang = userMessage + ` [Please respond in ${languageSelect.options[languageSelect.selectedIndex].text} (${currentLanguage} language code)].`;
-
-                const currentChatContext = [
-                    { role: "user", parts: [{ text: systemPrompt.parts[0].text + financialSummary }] }, // Combine system prompt with dynamic summary
-                    ...chatHistory.filter(msg => msg !== systemPrompt), // Exclude the original system prompt from history when sending to LLM
-                    { role: "user", parts: [{ text: userMessageWithLang }] }
+                // The system prompt (chatHistory[0]) is dynamically generated with the current language.
+                // chatHistory.slice(1) gets all user/model turns after the initial system prompt.
+                const chatHistoryForLLM = [
+                    { role: "user", parts: [{ text: getSystemPrompt(currentLanguage).parts[0].text + financialSummary }] },
+                    ...chatHistory.slice(1)
                 ];
 
-                const payload = { contents: currentChatContext };
+                console.log("Sending to LLM:", JSON.stringify(chatHistoryForLLM, null, 2));
+
+                const payload = { contents: chatHistoryForLLM };
                 const apiKey = ""; // Canvas will provide this at runtime
                 const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
 
@@ -1565,6 +1575,8 @@ If a user expresses a strong need to speak with a human, asks for a direct appoi
                 });
 
                 const result = await response.json();
+                console.log("LLM Response:", JSON.stringify(result, null, 2));
+
                 chatMessagesDiv.removeChild(loadingIndicator); // Remove loading indicator
 
                 if (result.candidates && result.candidates.length > 0 &&
@@ -1572,7 +1584,6 @@ If a user expresses a strong need to speak with a human, asks for a direct appoi
                     result.candidates[0].content.parts.length > 0) {
                     const botResponseText = result.candidates[0].content.parts[0].text;
                     addMessageToChat('bot', botResponseText);
-                    chatHistory.push({ role: "user", parts: [{ text: userMessage }] }); // Add original user message to local history
                     chatHistory.push({ role: "model", parts: [{ text: botResponseText }] }); // Add bot response to local history
                     saveToLocalStorage(); // Save updated chat history
                 } else {
@@ -1580,7 +1591,7 @@ If a user expresses a strong need to speak with a human, asks for a direct appoi
                     console.error("Unexpected API response structure:", result);
                 }
             } catch (error) {
-                chatMessagesDiv.removeChild(loadingIndicator); // Remove loading indicator
+                chatMessagesDiv.removeChild(loadingIndicator); // Always remove loading indicator on error
                 addMessageToChat('bot', translations[currentLanguage].networkError);
                 console.error("Error fetching AI response:", error);
             } finally {
@@ -1594,8 +1605,9 @@ If a user expresses a strong need to speak with a human, asks for a direct appoi
             e.preventDefault();
             const userMessage = chatInput.value.trim();
             if (userMessage) {
-                // Only add to display here, actual chatHistory update for LLM happens in getBotResponse
-                addMessageToChat('user', userMessage);
+                // The user message is now added to chatHistory *before* calling getBotResponse
+                // in the getBotResponse function itself for better history management.
+                addMessageToChat('user', userMessage); // Only add to display here
                 chatInput.value = ''; // Clear input field
                 getBotResponse(userMessage);
             }
@@ -1604,6 +1616,7 @@ If a user expresses a strong need to speak with a human, asks for a direct appoi
         // --- Language Switching ---
         languageSelect.addEventListener('change', (e) => {
             currentLanguage = e.target.value;
+            chatHistory[0] = getSystemPrompt(currentLanguage); // Update system prompt with new language
             saveToLocalStorage(); // Save selected language
             renderChatHistory(); // Re-render chat with new language
             renderQuickActions(); // Re-render quick actions with new language
