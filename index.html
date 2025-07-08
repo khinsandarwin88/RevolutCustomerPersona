@@ -4,28 +4,198 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Revolut Horizons: Your Financial Navigator</title>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@300;400;700&family=Verdana:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        /* CSS: Celestial Aura Aesthetic */
+        /* CSS: Theme Variables */
         :root {
-            --dark-purple: #1a0a2e;
-            --deep-space-blue: #0f0a20;
-            --glowing-teal: #00ffcc;
-            --soft-pink: #ff66b2;
-            --light-purple: #8e44ad;
-            --text-color-light: #e0e0e0;
-            --border-glow: rgba(0, 255, 204, 0.5);
-            --button-bg: #4a2d73;
-            --button-hover: #6a40a3;
-            --input-bg: #2b1c40;
+            /* Celestial Aura (Default) */
+            --bg-gradient-start: #0f0a20;
+            --bg-gradient-end: #1a0a2e;
+            --header-color: #00ffcc;
+            --header-shadow: rgba(0, 255, 204, 0.5);
             --card-bg: #251838;
+            --card-border: #8e44ad;
+            --card-shadow: rgba(0, 255, 204, 0.5);
+            --h2-color: #ff66b2;
+            --label-color: #00ffcc;
+            --input-bg: #2b1c40;
+            --input-border: #8e44ad;
+            --input-focus-border: #00ffcc;
+            --input-shadow: rgba(0, 255, 204, 0.2);
+            --input-focus-shadow: rgba(0, 255, 204, 0.4);
+            --button-bg: #4a2d73;
+            --button-hover-bg: #6a40a3;
+            --button-shadow: rgba(74, 45, 115, 0.5);
+            --button-hover-shadow: #ff66b2;
+            --text-color-light: #e0e0e0;
+            --goal-display-border: #00ffcc;
+            --goal-display-shadow: rgba(0, 255, 204, 0.5);
+            --goal-display-pulse-shadow: #00ffcc;
+            --goal-strong-color: #ff66b2;
+            --goal-impact-color: #00ffcc;
+            --timeline-line-color: #8e44ad;
+            --event-border: #ff66b2;
+            --event-shadow: rgba(255, 102, 178, 0.3);
+            --event-orb-bg: #00ffcc;
+            --event-orb-shadow: #00ffcc;
+            --event-income-color: #00ffcc;
+            --event-expense-color: #ff66b2;
+            --delete-button-color: #ff66b2;
+            --no-data-color: #8e44ad;
+            --talk-to-human-bg: #00ffcc;
+            --talk-to-human-color: #0f0a20;
+            --talk-to-human-shadow: #00ffcc;
+            --modal-bg: #2b1c40;
+            --modal-border: #00ffcc;
+            --modal-shadow: rgba(0, 255, 204, 0.5);
+            --modal-button-bg: #4a2d73;
+            --modal-button-hover: #6a40a3;
+            --modal-text-color: #e0e0e0;
+
+            /* Base font size for accessibility */
+            font-size: 18px;
+            --body-font: 'Roboto', sans-serif;
+            --header-font: 'Orbitron', sans-serif;
+
+            /* Chat specific colors */
+            --chat-bg: #1f143a;
+            --chat-header-bg: #3a255b;
+            --chat-header-text: #00ffcc;
+            --chat-message-user-bg: #4a2d73;
+            --chat-message-bot-bg: #2b1c40;
+            --chat-input-bg: #1a0a2e;
+            --chat-input-border: #8e44ad;
+            --chat-send-btn-bg: #00ffcc;
+            --chat-send-btn-color: #0f0a20;
+            --chat-loading-color: #ff66b2;
         }
 
+        /* Color-Blind Friendly Theme */
+        body[data-theme="color-blind"] {
+            --bg-gradient-start: #2c2c2c;
+            --bg-gradient-end: #1c1c1c;
+            --header-color: #ffa500; /* Bright Orange */
+            --header-shadow: rgba(255, 165, 0, 0.5);
+            --card-bg: #333333;
+            --card-border: #555555;
+            --card-shadow: rgba(255, 165, 0, 0.5);
+            --h2-color: #00bfff; /* Deep Sky Blue */
+            --label-color: #ffa500;
+            --input-bg: #3c3c3c;
+            --input-border: #555555;
+            --input-focus-border: #ffa500;
+            --input-shadow: rgba(255, 165, 0, 0.2);
+            --input-focus-shadow: rgba(255, 165, 0, 0.4);
+            --button-bg: #808080;
+            --button-hover-bg: #a0a0a0;
+            --button-shadow: rgba(128, 128, 128, 0.5);
+            --button-hover-shadow: #00bfff;
+            --text-color-light: #f0f0f0;
+            --goal-display-border: #ffa500;
+            --goal-display-shadow: rgba(255, 165, 0, 0.5);
+            --goal-display-pulse-shadow: #ffa500;
+            --goal-strong-color: #00bfff;
+            --goal-impact-color: #ffa500;
+            --timeline-line-color: #555555;
+            --event-border: #00bfff;
+            --event-shadow: rgba(0, 191, 255, 0.3);
+            --event-orb-bg: #ffa500;
+            --event-orb-shadow: #ffa500;
+            --event-income-color: #ffa500;
+            --event-expense-color: #00bfff;
+            --delete-button-color: #00bfff;
+            --no-data-color: #555555;
+            --talk-to-human-bg: #ffa500;
+            --talk-to-human-color: #1c1c1c;
+            --talk-to-human-shadow: #ffa500;
+            --modal-bg: #3c3c3c;
+            --modal-border: #ffa500;
+            --modal-shadow: rgba(255, 165, 0, 0.5);
+            --modal-button-bg: #808080;
+            --modal-button-hover: #a0a0a0;
+            --modal-text-color: #f0f0f0;
+
+            /* Chat specific colors */
+            --chat-bg: #222222;
+            --chat-header-bg: #444444;
+            --chat-header-text: #ffa500;
+            --chat-message-user-bg: #666666;
+            --chat-message-bot-bg: #333333;
+            --chat-input-bg: #2c2c2c;
+            --chat-input-border: #555555;
+            --chat-send-btn-bg: #ffa500;
+            --chat-send-btn-color: #1c1c1c;
+            --chat-loading-color: #00bfff;
+        }
+
+        /* Elderly-Friendly Theme */
+        body[data-theme="elderly"] {
+            --bg-gradient-start: #ffffff; /* White background */
+            --bg-gradient-end: #f0f0f0; /* Light grey background */
+            --header-color: #0056b3; /* Dark Blue */
+            --header-shadow: rgba(0, 86, 179, 0.3);
+            --card-bg: #ffffff;
+            --card-border: #cccccc;
+            --card-shadow: rgba(0, 0, 0, 0.1);
+            --h2-color: #007bff; /* Standard Blue */
+            --label-color: #333333;
+            --input-bg: #e9ecef;
+            --input-border: #ced4da;
+            --input-focus-border: #007bff;
+            --input-shadow: rgba(0, 0, 0, 0.05);
+            --input-focus-shadow: rgba(0, 123, 255, 0.25);
+            --button-bg: #007bff;
+            --button-hover-bg: #0056b3;
+            --button-shadow: rgba(0, 123, 255, 0.25);
+            --button-hover-shadow: rgba(0, 86, 179, 0.4);
+            --text-color-light: #333333; /* Dark text */
+            --goal-display-border: #0056b3;
+            --goal-display-shadow: rgba(0, 86, 179, 0.3);
+            --goal-display-pulse-shadow: rgba(0, 86, 179, 0.5);
+            --goal-strong-color: #cc0000; /* Strong Red */
+            --goal-impact-color: #0056b3;
+            --timeline-line-color: #999999;
+            --event-border: #cccccc;
+            --event-shadow: rgba(0, 0, 0, 0.05);
+            --event-orb-bg: #007bff;
+            --event-orb-shadow: rgba(0, 123, 255, 0.2);
+            --event-income-color: #28a745; /* Green */
+            --event-expense-color: #dc3545; /* Red */
+            --delete-button-color: #dc3545;
+            --no-data-color: #6c757d;
+            --talk-to-human-bg: #28a745; /* Green for help */
+            --talk-to-human-color: #ffffff;
+            --talk-to-human-shadow: rgba(40, 167, 69, 0.5);
+            --modal-bg: #ffffff;
+            --modal-border: #007bff;
+            --modal-shadow: rgba(0, 123, 255, 0.2);
+            --modal-button-bg: #007bff;
+            --modal-button-hover: #0056b3;
+            --modal-text-color: #333333;
+
+            font-size: 20px; /* Even larger base font */
+            --body-font: 'Verdana', sans-serif;
+            --header-font: 'Verdana', sans-serif; /* Simpler header font */
+
+            /* Chat specific colors */
+            --chat-bg: #f8f9fa;
+            --chat-header-bg: #e9ecef;
+            --chat-header-text: #333333;
+            --chat-message-user-bg: #e2f0d9; /* Light green */
+            --chat-message-bot-bg: #e9ecef; /* Light grey */
+            --chat-input-bg: #ffffff;
+            --chat-input-border: #ced4da;
+            --chat-send-btn-bg: #007bff;
+            --chat-send-btn-color: #ffffff;
+            --chat-loading-color: #007bff;
+        }
+
+        /* General Styles applying theme variables */
         body {
-            font-family: 'Roboto', sans-serif;
+            font-family: var(--body-font);
             margin: 0;
             padding: 0;
-            background: linear-gradient(135deg, var(--deep-space-blue) 0%, var(--dark-purple) 100%);
+            background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
             color: var(--text-color-light);
             display: flex;
             flex-direction: column;
@@ -33,10 +203,10 @@
             min-height: 100vh;
             overflow-x: hidden;
             position: relative;
-            font-size: 18px; /* Base font size for accessibility */
+            font-size: var(--font-size);
+            transition: background 0.5s ease, color 0.5s ease; /* Smooth theme transitions */
         }
 
-        /* Subtle background nebula effect */
         body::before {
             content: '';
             position: absolute;
@@ -44,10 +214,11 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: radial-gradient(circle at 10% 20%, rgba(255,102,178,0.1) 0%, transparent 50%),
-                        radial-gradient(circle at 90% 80%, rgba(0,255,204,0.1) 0%, transparent 50%);
+            background: radial-gradient(circle at 10% 20%, var(--event-shadow) 0%, transparent 50%),
+                        radial-gradient(circle at 90% 80%, var(--card-shadow) 0%, transparent 50%);
             z-index: -1;
             opacity: 0.8;
+            transition: background 0.5s ease, opacity 0.5s ease;
         }
 
         header {
@@ -61,18 +232,19 @@
         }
 
         header h1 {
-            font-family: 'Orbitron', sans-serif;
-            color: var(--glowing-teal);
-            font-size: 2.5em; /* 2.5 * 18px = 45px */
-            text-shadow: 0 0 15px var(--glowing-teal), 0 0 30px var(--glowing-teal);
+            font-family: var(--header-font);
+            color: var(--header-color);
+            font-size: 2.5em;
+            text-shadow: 0 0 15px var(--header-shadow), 0 0 30px var(--header-shadow);
             letter-spacing: 2px;
             margin: 0;
+            transition: color 0.5s ease, text-shadow 0.5s ease;
         }
 
         .container {
             background-color: var(--card-bg);
             border-radius: 15px;
-            box-shadow: 0 0 30px var(--border-glow);
+            box-shadow: 0 0 30px var(--card-shadow);
             padding: 30px;
             margin: 20px auto;
             width: 90%;
@@ -80,10 +252,11 @@
             display: flex;
             flex-direction: column;
             gap: 25px;
-            border: 1px solid var(--light-purple);
+            border: 1px solid var(--card-border);
             animation: fadeIn 1s ease-out;
             position: relative;
             z-index: 5;
+            transition: background-color 0.5s ease, border-color 0.5s ease, box-shadow 0.5s ease;
         }
 
         @keyframes fadeIn {
@@ -92,11 +265,12 @@
         }
 
         h2 {
-            font-family: 'Orbitron', sans-serif;
-            color: var(--soft-pink);
+            font-family: var(--header-font);
+            color: var(--h2-color);
             text-align: center;
             margin-bottom: 20px;
-            font-size: 1.8em; /* 1.8 * 18px = 32.4px */
+            font-size: 1.8em;
+            transition: color 0.5s ease;
         }
 
         .form-group {
@@ -106,9 +280,10 @@
         label {
             display: block;
             margin-bottom: 8px;
-            color: var(--glowing-teal);
+            color: var(--label-color);
             font-weight: bold;
-            font-size: 1.1em; /* 1.1 * 18px = 19.8px */
+            font-size: 1.1em;
+            transition: color 0.5s ease;
         }
 
         input[type="text"],
@@ -118,21 +293,21 @@
             width: calc(100% - 20px);
             padding: 12px;
             margin-top: 5px;
-            border: 1px solid var(--light-purple);
+            border: 1px solid var(--input-border);
             border-radius: 8px;
             background-color: var(--input-bg);
             color: var(--text-color-light);
-            font-size: 1em; /* 1 * 18px = 18px */
-            box-shadow: inset 0 0 8px rgba(0, 255, 204, 0.2);
-            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            font-size: 1em;
+            box-shadow: inset 0 0 8px var(--input-shadow);
+            transition: border-color 0.3s ease, box-shadow 0.3s ease, background-color 0.5s ease, color 0.5s ease;
         }
 
         input[type="text"]:focus,
         input[type="number"]:focus,
         input[type="date"]:focus,
         select:focus {
-            border-color: var(--glowing-teal);
-            box-shadow: 0 0 15px var(--glowing-teal), inset 0 0 10px rgba(0, 255, 204, 0.4);
+            border-color: var(--input-focus-border);
+            box-shadow: 0 0 15px var(--input-focus-border), inset 0 0 10px var(--input-focus-shadow);
             outline: none;
         }
 
@@ -143,53 +318,57 @@
             border: none;
             border-radius: 8px;
             cursor: pointer;
-            font-size: 1.1em; /* 1.1 * 18px = 19.8px */
+            font-size: 1.1em;
             font-weight: bold;
-            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease, color 0.5s ease;
             display: block;
             width: fit-content;
             margin: 20px auto 0;
-            box-shadow: 0 0 10px rgba(74, 45, 115, 0.5);
-            border: 1px solid var(--light-purple);
+            box-shadow: 0 0 10px var(--button-shadow);
+            border: 1px solid var(--card-border);
         }
 
         button:hover {
-            background-color: var(--button-hover);
+            background-color: var(--button-hover-bg);
             transform: translateY(-2px);
-            box-shadow: 0 0 20px var(--soft-pink);
+            box-shadow: 0 0 20px var(--button-hover-shadow);
         }
 
         .goal-display {
             background-color: var(--input-bg);
-            border: 1px solid var(--glowing-teal);
+            border: 1px solid var(--goal-display-border);
             border-radius: 10px;
             padding: 20px;
             text-align: center;
-            box-shadow: 0 0 15px var(--border-glow);
+            box-shadow: 0 0 15px var(--goal-display-shadow);
             animation: pulseGlow 2s infinite alternate;
+            transition: background-color 0.5s ease, border-color 0.5s ease, box-shadow 0.5s ease;
         }
 
         @keyframes pulseGlow {
-            from { box-shadow: 0 0 15px var(--border-glow); }
-            to { box-shadow: 0 0 25px var(--glowing-teal); }
+            from { box-shadow: 0 0 15px var(--goal-display-shadow); }
+            to { box-shadow: 0 0 25px var(--goal-display-pulse-shadow); }
         }
 
         .goal-display p {
             margin: 10px 0;
-            font-size: 1.2em; /* 1.2 * 18px = 21.6px */
+            font-size: 1.2em;
             color: var(--text-color-light);
+            transition: color 0.5s ease;
         }
 
         .goal-display strong {
-            color: var(--soft-pink);
-            font-size: 1.3em; /* 1.3 * 18px = 23.4px */
+            color: var(--goal-strong-color);
+            font-size: 1.3em;
+            transition: color 0.5s ease;
         }
 
         .goal-impact {
             margin-top: 15px;
-            font-size: 1.1em; /* 1.1 * 18px = 19.8px */
-            color: var(--glowing-teal);
+            font-size: 1.1em;
+            color: var(--goal-impact-color);
             font-weight: bold;
+            transition: color 0.5s ease;
         }
 
         .timeline {
@@ -201,73 +380,91 @@
             padding: 0;
             margin: 0;
             position: relative;
-            border-left: 2px dashed var(--light-purple); /* The "horizon" line */
+            border-left: 2px dashed var(--timeline-line-color);
             padding-left: 20px;
+            transition: border-color 0.5s ease;
         }
 
         .event-list li {
             background-color: var(--card-bg);
-            border: 1px solid var(--soft-pink);
+            border: 1px solid var(--event-border);
             border-radius: 10px;
             padding: 15px;
             margin-bottom: 15px;
             position: relative;
-            box-shadow: 0 0 15px rgba(255, 102, 178, 0.3);
+            box-shadow: 0 0 15px var(--event-shadow);
             display: flex;
             justify-content: space-between;
             align-items: center;
+            transition: background-color 0.5s ease, border-color 0.5s ease, box-shadow 0.5s ease;
         }
 
         .event-list li::before {
             content: '';
             position: absolute;
-            left: -28px; /* Align with dashed line */
+            left: -28px;
             top: 50%;
             transform: translateY(-50%);
             width: 12px;
             height: 12px;
-            background-color: var(--glowing-teal);
+            background-color: var(--event-orb-bg);
             border-radius: 50%;
-            box-shadow: 0 0 10px var(--glowing-teal), 0 0 20px var(--glowing-teal);
+            box-shadow: 0 0 10px var(--event-orb-shadow), 0 0 20px var(--event-orb-shadow);
+            transition: background-color 0.5s ease, box-shadow 0.5s ease;
         }
 
         .event-list li .event-details {
             flex-grow: 1;
-            font-size: 1em; /* 1 * 18px = 18px */
+            font-size: 1em;
+            color: var(--text-color-light);
+            transition: color 0.5s ease;
         }
 
         .event-list li .event-details strong {
-            color: var(--glowing-teal);
-            font-size: 1.1em; /* 1.1 * 18px = 19.8px */
+            color: var(--label-color);
+            font-size: 1.1em;
+            transition: color 0.5s ease;
         }
 
         .event-list li .event-amount {
             font-weight: bold;
-            font-size: 1.1em; /* 1.1 * 18px = 19.8px */
+            font-size: 1.1em;
+            transition: color 0.5s ease;
         }
 
         .event-list li.expense .event-amount {
-            color: var(--soft-pink); /* Reddish for expenses */
+            color: var(--event-expense-color);
         }
 
         .event-list li.income .event-amount {
-            color: var(--glowing-teal); /* Greenish for income */
+            color: var(--event-income-color);
+        }
+
+        .event-actions {
+            display: flex;
+            gap: 5px;
+            margin-left: 15px;
         }
 
         .event-list button {
             background: none;
             border: none;
-            color: var(--soft-pink);
+            color: var(--delete-button-color);
             font-size: 1.2em;
             cursor: pointer;
-            margin-left: 15px;
             transition: color 0.3s ease, transform 0.2s ease;
-            padding: 5px; /* Touch friendly */
-            width: 30px; /* Touch friendly */
-            height: 30px; /* Touch friendly */
+            padding: 5px;
+            width: 30px;
+            height: 30px;
             display: flex;
             align-items: center;
             justify-content: center;
+            box-shadow: none; /* Override general button shadow */
+            margin: 0; /* Override general button margin */
+        }
+
+        .event-list button.edit-btn {
+            color: var(--label-color); /* Teal for edit */
         }
 
         .event-list button:hover {
@@ -277,68 +474,312 @@
 
         .no-events, .no-goal {
             text-align: center;
-            color: var(--light-purple);
+            color: var(--no-data-color);
             font-style: italic;
             padding: 20px;
+            transition: color 0.5s ease;
         }
 
-        .talk-to-human {
+        .talk-to-human-btn { /* Renamed from .talk-to-human to avoid conflict with chat button */
             position: fixed;
             bottom: 30px;
             right: 30px;
-            background-color: var(--glowing-teal);
-            color: var(--deep-space-blue);
+            background-color: var(--talk-to-human-bg);
+            color: var(--talk-to-human-color);
             border-radius: 50px;
             padding: 15px 25px;
             font-size: 1.1em;
             font-weight: bold;
-            box-shadow: 0 0 20px var(--glowing-teal), 0 0 40px var(--glowing-teal);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 0 20px var(--talk-to-human-shadow), 0 0 40px var(--talk-to-human-shadow);
+            transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.5s ease, color 0.5s ease;
             cursor: pointer;
             z-index: 100;
-            border: none; /* Ensure no default button border */
+            border: none;
         }
 
-        .talk-to-human:hover {
+        .talk-to-human-btn:hover {
             transform: translateY(-5px);
-            box-shadow: 0 0 30px var(--glowing-teal), 0 0 60px var(--glowing-teal);
+            box-shadow: 0 0 30px var(--talk-to-human-shadow), 0 0 60px var(--talk-to-human-shadow);
         }
 
-        /* Responsive adjustments */
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+
+        .modal-overlay.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background-color: var(--modal-bg);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 0 25px var(--modal-shadow);
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+            border: 1px solid var(--modal-border);
+            transform: translateY(-20px);
+            opacity: 0;
+            transition: transform 0.3s ease, opacity 0.3s ease, background-color 0.5s ease, border-color 0.5s ease, box-shadow 0.5s ease;
+        }
+
+        .modal-overlay.visible .modal-content {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .modal-content h3 {
+            color: var(--h2-color);
+            margin-top: 0;
+            font-size: 1.5em;
+            transition: color 0.5s ease;
+        }
+
+        .modal-content p {
+            color: var(--modal-text-color);
+            margin-bottom: 25px;
+            font-size: 1em;
+            transition: color 0.5s ease;
+        }
+
+        .modal-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .modal-buttons button {
+            padding: 10px 20px;
+            font-size: 1em;
+            margin: 0; /* Override default button margin */
+            background-color: var(--modal-button-bg);
+            color: var(--text-color-light);
+            border: 1px solid var(--modal-border);
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease, color 0.5s ease;
+        }
+
+        .modal-buttons button:hover {
+            background-color: var(--modal-button-hover);
+            transform: translateY(-1px);
+            box-shadow: 0 0 10px var(--modal-shadow);
+        }
+
+        /* Theme Switcher */
+        .theme-switcher {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            z-index: 20;
+        }
+
+        .theme-switcher label {
+            font-size: 0.9em;
+            margin-right: 10px;
+            color: var(--text-color-light);
+            transition: color 0.5s ease;
+        }
+
+        .theme-switcher select {
+            width: auto;
+            padding: 8px 12px;
+            font-size: 0.9em;
+            border-radius: 5px;
+            background-color: var(--input-bg);
+            color: var(--text-color-light);
+            border: 1px solid var(--input-border);
+            transition: background-color 0.5s ease, color 0.5s ease, border-color 0.5s ease;
+        }
+
+        /* Chatbot Interface Styles */
+        .chat-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 350px;
+            height: 500px;
+            background-color: var(--chat-bg);
+            border-radius: 15px;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            z-index: 1000;
+            transform: scale(0);
+            transform-origin: bottom right;
+            transition: transform 0.3s ease-out;
+            border: 1px solid var(--chat-header-bg);
+        }
+
+        .chat-container.open {
+            transform: scale(1);
+        }
+
+        .chat-header {
+            background-color: var(--chat-header-bg);
+            color: var(--chat-header-text);
+            padding: 15px;
+            font-size: 1.2em;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top-left-radius: 15px;
+            border-top-right-radius: 15px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .chat-header button {
+            background: none;
+            border: none;
+            color: var(--chat-header-text);
+            font-size: 1.5em;
+            cursor: pointer;
+            padding: 5px;
+            margin: 0; /* Override general button margin */
+        }
+
+        .chat-messages {
+            flex-grow: 1;
+            padding: 15px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            scrollbar-width: thin;
+            scrollbar-color: var(--chat-header-bg) var(--chat-bg);
+        }
+
+        .chat-messages::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .chat-messages::-webkit-scrollbar-track {
+            background: var(--chat-bg);
+        }
+
+        .chat-messages::-webkit-scrollbar-thumb {
+            background-color: var(--chat-header-bg);
+            border-radius: 10px;
+            border: 2px solid var(--chat-bg);
+        }
+
+        .chat-message {
+            max-width: 80%;
+            padding: 10px 15px;
+            border-radius: 15px;
+            word-wrap: break-word;
+            font-size: 0.9em;
+            line-height: 1.4;
+        }
+
+        .chat-message.user {
+            align-self: flex-end;
+            background-color: var(--chat-message-user-bg);
+            color: var(--text-color-light);
+            border-bottom-right-radius: 2px;
+        }
+
+        .chat-message.bot {
+            align-self: flex-start;
+            background-color: var(--chat-message-bot-bg);
+            color: var(--text-color-light);
+            border-bottom-left-radius: 2px;
+        }
+
+        .chat-input-form {
+            display: flex;
+            padding: 15px;
+            border-top: 1px solid var(--chat-input-border);
+            background-color: var(--chat-input-bg);
+        }
+
+        .chat-input-form input {
+            flex-grow: 1;
+            margin: 0;
+            width: auto; /* Override width: calc(100% - 20px) */
+            padding: 10px;
+            border-radius: 20px;
+            border: 1px solid var(--chat-input-border);
+            background-color: var(--chat-input-bg);
+            color: var(--text-color-light);
+            font-size: 1em;
+            box-shadow: none; /* Override general input shadow */
+        }
+
+        .chat-input-form input:focus {
+            box-shadow: 0 0 10px var(--chat-header-text);
+        }
+
+        .chat-input-form button {
+            margin: 0 0 0 10px;
+            padding: 10px 15px;
+            border-radius: 20px;
+            background-color: var(--chat-send-btn-bg);
+            color: var(--chat-send-btn-color);
+            font-size: 1em;
+            transition: background-color 0.2s ease;
+            box-shadow: none; /* Override general button shadow */
+        }
+
+        .chat-input-form button:hover {
+            background-color: var(--chat-header-text);
+            transform: none;
+            box-shadow: none;
+        }
+
+        .chat-loading-indicator {
+            align-self: flex-start;
+            padding: 10px 15px;
+            font-style: italic;
+            color: var(--chat-loading-color);
+            font-size: 0.9em;
+        }
+
+
+        /* Responsive adjustments for chat */
         @media (max-width: 600px) {
-            header h1 {
-                font-size: 2em;
+            .chat-container {
+                width: 90%;
+                height: 80%;
+                bottom: 10px;
+                right: 5%;
+                left: 5%;
+                max-width: none; /* Allow full width on small screens */
             }
-            .container {
-                padding: 20px;
-                margin: 15px auto;
-            }
-            label, input, select, button, .goal-display p, .event-list li .event-details {
-                font-size: 0.9em; /* Adjust base font size slightly */
-            }
-            .talk-to-human {
-                bottom: 20px;
-                right: 20px;
-                padding: 12px 20px;
-                font-size: 1em;
-            }
-            .event-list li {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-            .event-list li .event-amount {
-                margin-top: 5px;
-            }
-            .event-list button {
-                position: absolute;
-                top: 10px;
+            .talk-to-human-btn {
+                bottom: 10px;
                 right: 10px;
-                margin-left: 0;
+                padding: 10px 15px;
+                font-size: 0.9em;
             }
         }
     </style>
 </head>
-<body>
+<body data-theme="celestial-aura">
+    <div class="theme-switcher">
+        <label for="themeSelect">Theme:</label>
+        <select id="themeSelect">
+            <option value="celestial-aura">Celestial Aura</option>
+            <option value="color-blind">Color-Blind Friendly</option>
+            <option value="elderly">Elderly-Friendly</option>
+        </select>
+    </div>
+
     <header>
         <h1>Revolut Horizons</h1>
         <p>Your Personal Financial Navigator</p>
@@ -368,6 +809,7 @@
                 <p><strong>Goal:</strong> <span id="displayGoalName"></span></p>
                 <p><strong>Target:</strong> €<span id="displayGoalAmount"></span> by <span id="displayGoalDate"></span></p>
                 <p class="goal-impact">Projected Completion: <strong id="projectedGoalDate"></strong></p>
+                <button id="editGoalBtn" style="margin-top: 15px;">Edit Goal</button>
             </div>
             <p id="noGoalMessage" class="no-goal">No horizon goal set yet. Set one above to begin your journey!</p>
         </section>
@@ -402,10 +844,40 @@
                 <!-- Events will be dynamically added here -->
             </ul>
             <p id="noEventsMessage" class="no-events">No events added yet. Add some to see their impact!</p>
+            <button id="resetAllDataBtn" style="background-color: var(--event-expense-color); margin-top: 30px;">Reset All Data</button>
         </section>
     </main>
 
-    <button class="talk-to-human" onclick="talkToHuman()">Need Help? Talk to us.</button>
+    <button class="talk-to-human-btn" onclick="toggleChat()">Need Help? Talk to us.</button>
+
+    <!-- Chatbot Interface -->
+    <div id="chatContainer" class="chat-container">
+        <div class="chat-header">
+            <span>Revolut Assistant</span>
+            <button onclick="toggleChat()">&times;</button>
+        </div>
+        <div id="chatMessages" class="chat-messages">
+            <!-- Chat messages will be added here -->
+            <div class="chat-message bot">Hello! I'm your Revolut Assistant. How can I help you with your financial horizons today?</div>
+        </div>
+        <form id="chatInputForm" class="chat-input-form">
+            <input type="text" id="chatInput" placeholder="Type your message...">
+            <button type="submit" id="chatSendBtn">Send</button>
+        </form>
+    </div>
+
+    <!-- Custom Modal Structure -->
+    <div id="customModal" class="modal-overlay">
+        <div class="modal-content">
+            <h3 id="modalTitle"></h3>
+            <p id="modalMessage"></p>
+            <div class="modal-buttons">
+                <button id="modalConfirmBtn" style="display: none;">Confirm</button>
+                <button id="modalCancelBtn" style="display: none;">Cancel</button>
+                <button id="modalOkBtn" style="display: none;">OK</button>
+            </div>
+        </div>
+    </div>
 
     <script>
         // JavaScript Logic
@@ -413,6 +885,7 @@
         const goalAmountInput = document.getElementById('goalAmount');
         const goalDateInput = document.getElementById('goalDate');
         const saveGoalBtn = document.getElementById('saveGoalBtn');
+        const editGoalBtn = document.getElementById('editGoalBtn');
 
         const displayGoalName = document.getElementById('displayGoalName');
         const displayGoalAmount = document.getElementById('displayGoalAmount');
@@ -428,19 +901,87 @@
         const addEventBtn = document.getElementById('addEventBtn');
         const eventListUl = document.getElementById('eventList');
         const noEventsMessage = document.getElementById('noEventsMessage');
+        const resetAllDataBtn = document.getElementById('resetAllDataBtn');
+
+        const themeSelect = document.getElementById('themeSelect');
+
+        // Modal Elements
+        const customModal = document.getElementById('customModal');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalMessage = document.getElementById('modalMessage');
+        const modalConfirmBtn = document.getElementById('modalConfirmBtn');
+        const modalCancelBtn = document.getElementById('modalCancelBtn');
+        const modalOkBtn = document.getElementById('modalOkBtn');
+
+        // Chat Elements
+        const chatContainer = document.getElementById('chatContainer');
+        const chatMessagesDiv = document.getElementById('chatMessages');
+        const chatInputForm = document.getElementById('chatInputForm');
+        const chatInput = document.getElementById('chatInput');
+        const chatSendBtn = document.getElementById('chatSendBtn');
 
         let goal = null;
         let events = [];
+        let editingEventIndex = -1; // -1 means no event is being edited
+
+        let chatHistory = []; // Stores chat messages for display and LLM context
+        let isHumanEscalated = false; // Flag to stop AI responses after escalation
+        let isAILoading = false; // Flag to prevent multiple AI requests
+
+        // --- Custom Modal Functions ---
+        function showModal(title, message, type = 'alert', onConfirm = null, onCancel = null) {
+            modalTitle.textContent = title;
+            modalMessage.textContent = message;
+
+            modalConfirmBtn.style.display = 'none';
+            modalCancelBtn.style.display = 'none';
+            modalOkBtn.style.display = 'none';
+
+            // Clear previous event listeners
+            modalConfirmBtn.onclick = null;
+            modalCancelBtn.onclick = null;
+            modalOkBtn.onclick = null;
+
+            if (type === 'confirm') {
+                modalConfirmBtn.style.display = 'inline-block';
+                modalCancelBtn.style.display = 'inline-block';
+                modalConfirmBtn.onclick = () => {
+                    hideModal();
+                    if (onConfirm) onConfirm();
+                };
+                modalCancelBtn.onclick = () => {
+                    hideModal();
+                    if (onCancel) onCancel();
+                };
+            } else { // 'alert' type
+                modalOkBtn.style.display = 'inline-block';
+                modalOkBtn.onclick = () => {
+                    hideModal();
+                    if (onConfirm) onConfirm(); // Use onConfirm for OK button callback
+                };
+            }
+            customModal.classList.add('visible');
+        }
+
+        function hideModal() {
+            customModal.classList.remove('visible');
+        }
 
         // --- LocalStorage Functions ---
         function saveToLocalStorage() {
             localStorage.setItem('horizonsGoal', JSON.stringify(goal));
             localStorage.setItem('horizonsEvents', JSON.stringify(events));
+            localStorage.setItem('horizonsTheme', document.body.dataset.theme);
+            localStorage.setItem('horizonsChatHistory', JSON.stringify(chatHistory));
+            localStorage.setItem('horizonsIsHumanEscalated', JSON.stringify(isHumanEscalated));
         }
 
         function loadFromLocalStorage() {
             const storedGoal = localStorage.getItem('horizonsGoal');
             const storedEvents = localStorage.getItem('horizonsEvents');
+            const storedTheme = localStorage.getItem('horizonsTheme');
+            const storedChatHistory = localStorage.getItem('horizonsChatHistory');
+            const storedIsHumanEscalated = localStorage.getItem('horizonsIsHumanEscalated');
 
             if (storedGoal) {
                 goal = JSON.parse(storedGoal);
@@ -458,6 +999,20 @@
                         event.date = new Date(event.date);
                     }
                 });
+            }
+
+            if (storedTheme) {
+                document.body.dataset.theme = storedTheme;
+                themeSelect.value = storedTheme;
+            }
+
+            if (storedChatHistory) {
+                chatHistory = JSON.parse(storedChatHistory);
+                renderChatHistory();
+            }
+
+            if (storedIsHumanEscalated) {
+                isHumanEscalated = JSON.parse(storedIsHumanEscalated);
             }
         }
 
@@ -478,18 +1033,16 @@
             const initialGoalAmount = parseFloat(goal.targetAmount);
             const initialGoalDate = new Date(goal.targetDate);
             const today = new Date();
-            today.setHours(0, 0, 0, 0); // Normalize today to start of day
+            today.setHours(0, 0, 0, 0);
 
-            // Calculate initial months to goal
             const diffTimeInitial = initialGoalDate.getTime() - today.getTime();
             const initialDaysToGoal = diffTimeInitial / (1000 * 60 * 60 * 24);
 
-            if (initialDaysToGoal <= 0) { // If goal date is in past or today
+            if (initialDaysToGoal <= 0) {
                 projectedGoalDate.textContent = 'Goal date is in the past!';
                 return;
             }
 
-            // Sum up net impact of all events
             let netEventImpact = 0;
             events.forEach(event => {
                 if (event.type === 'income') {
@@ -503,17 +1056,13 @@
 
             if (remainingAmountToSave <= 0) {
                 projectedGoalDate.textContent = `Achieved! ${formatDate(today)}`;
-                projectedGoalDate.style.color = 'var(--glowing-teal)'; // Using string literal for CSS variable
+                projectedGoalDate.style.color = 'var(--goal-impact-color)';
                 return;
             }
 
-            // Simple proportionality for prototype:
-            // If net impact is positive, goal date moves earlier.
-            // If net impact is negative, goal date moves later.
-            // Let's assume a baseline daily saving rate from the original goal.
             const assumedDailySavingRate = initialGoalAmount / initialDaysToGoal;
 
-            if (assumedDailySavingRate <= 0) { // Prevent division by zero if goal is 0 or negative
+            if (assumedDailySavingRate <= 0) {
                 projectedGoalDate.textContent = 'Cannot calculate impact (Zero/Negative Goal Amount).';
                 return;
             }
@@ -523,17 +1072,17 @@
 
             projectedGoalDate.textContent = formatDate(newProjectedDate);
 
-            // Give visual feedback based on change
             const diffDaysProjected = newProjectedDate.getTime() - initialGoalDate.getTime();
-            if (Math.abs(diffDaysProjected) < 10 * (1000 * 60 * 60 * 24)) { // Within 10 days, consider "on track"
-                projectedGoalDate.style.color = 'var(--glowing-teal)';
-            } else if (diffDaysProjected < 0) { // Earlier
-                projectedGoalDate.style.color = 'var(--glowing-teal)';
-            } else { // Later
-                projectedGoalDate.style.color = 'var(--soft-pink)';
+            const tenDaysInMs = 10 * (1000 * 60 * 60 * 24);
+
+            if (Math.abs(diffDaysProjected) < tenDaysInMs) {
+                projectedGoalDate.style.color = 'var(--goal-impact-color)'; // On track
+            } else if (diffDaysProjected < 0) {
+                projectedGoalDate.style.color = 'var(--event-income-color)'; // Earlier
+            } else {
+                projectedGoalDate.style.color = 'var(--event-expense-color)'; // Later
             }
         }
-
 
         // --- Render Functions ---
         function renderGoal() {
@@ -542,10 +1091,12 @@
                 displayGoalAmount.textContent = parseFloat(goal.targetAmount).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
                 displayGoalDate.textContent = formatDate(goal.targetDate);
                 goalDisplayDiv.style.display = 'block';
+                editGoalBtn.style.display = 'inline-block';
                 noGoalMessage.style.display = 'none';
                 calculateProjectedGoalDate();
             } else {
                 goalDisplayDiv.style.display = 'none';
+                editGoalBtn.style.display = 'none';
                 noGoalMessage.style.display = 'block';
             }
         }
@@ -558,22 +1109,24 @@
             }
             noEventsMessage.style.display = 'none';
 
-            // Sort events by date
             events.sort((a, b) => new Date(a.date) - new Date(b.date));
 
             events.forEach((event, index) => {
                 const listItem = document.createElement('li');
-                listItem.classList.add(event.type); // 'income' or 'expense'
+                listItem.classList.add(event.type);
                 listItem.innerHTML = `
                     <div class="event-details">
                         <strong>${event.name}</strong> (${formatDate(event.date)})
                     </div>
                     <span class="event-amount">${event.type === 'income' ? '+' : '-'}€${parseFloat(event.amount).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
-                    <button data-index="${index}">&#x2715;</button> <!-- Unicode 'X' for delete -->
+                    <div class="event-actions">
+                        <button class="edit-btn" data-index="${index}">&#x270E;</button> <!-- Edit icon -->
+                        <button class="delete-btn" data-index="${index}">&#x2715;</button> <!-- Delete icon -->
+                    </div>
                 `;
                 eventListUl.appendChild(listItem);
             });
-            calculateProjectedGoalDate(); // Recalculate projection after rendering
+            calculateProjectedGoalDate();
         }
 
         // --- Event Handlers ---
@@ -589,10 +1142,24 @@
                     targetDate: new Date(date)
                 };
                 saveToLocalStorage();
-                alert('Horizon Goal set successfully!'); // Using alert for simplicity as per previous instruction
-                renderGoal();
+                showModal('Goal Set!', 'Your Horizon Goal has been successfully set.', 'alert', renderGoal);
             } else {
-                alert('Please fill in all goal details correctly (Goal name, Amount > 0, and Date).');
+                showModal('Input Error', 'Please fill in all goal details correctly (Goal name, Amount > 0, and Date).');
+            }
+        });
+
+        editGoalBtn.addEventListener('click', () => {
+            if (goal) {
+                goalNameInput.value = goal.name;
+                goalAmountInput.value = goal.targetAmount;
+                // Format date for input type="date" (YYYY-MM-DD)
+                const dateObj = new Date(goal.targetDate);
+                const yyyy = dateObj.getFullYear();
+                const mm = String(dateObj.getMonth() + 1).padStart(2, '0');
+                const dd = String(dateObj.getDate()).padStart(2, '0');
+                goalDateInput.value = `${yyyy}-${mm}-${dd}`;
+
+                showModal('Edit Goal', 'Modify your goal details above and click "Set My Goal" to update.', 'alert');
             }
         });
 
@@ -603,48 +1170,208 @@
             const date = eventDateInput.value;
 
             if (name && amount >= 0 && date) {
-                events.push({
-                    name: name,
-                    type: type,
-                    amount: amount,
-                    date: new Date(date) // Store as Date object for sorting/calculation
-                });
+                if (editingEventIndex === -1) {
+                    // Add new event
+                    events.push({
+                        name: name,
+                        type: type,
+                        amount: amount,
+                        date: new Date(date)
+                    });
+                    showModal('Event Added', 'Your event has been added to the timeline!', 'alert');
+                } else {
+                    // Update existing event
+                    events[editingEventIndex] = {
+                        name: name,
+                        type: type,
+                        amount: amount,
+                        date: new Date(date)
+                    };
+                    showModal('Event Updated', 'Your event has been updated on the timeline!', 'alert');
+                    editingEventIndex = -1; // Reset editing state
+                    addEventBtn.textContent = 'Add Event to Timeline'; // Reset button text
+                }
                 saveToLocalStorage();
-                alert('Event added to your timeline!'); // Using alert for simplicity
                 renderEvents();
                 // Clear form fields
                 eventNameInput.value = '';
                 eventAmountInput.value = '0';
                 eventDateInput.value = '';
             } else {
-                alert('Please fill in all event details correctly (Event name, Amount >= 0, and Date).');
+                showModal('Input Error', 'Please fill in all event details correctly (Event name, Amount >= 0, and Date).');
             }
         });
 
         eventListUl.addEventListener('click', (e) => {
-            if (e.target.tagName === 'BUTTON') {
+            if (e.target.classList.contains('delete-btn')) {
                 const index = parseInt(e.target.dataset.index);
-                // Using confirm for simplicity as per previous instruction
-                if (confirm('Are you sure you want to remove this event?')) {
+                showModal('Confirm Deletion', 'Are you sure you want to remove this event?', 'confirm', () => {
                     events.splice(index, 1);
                     saveToLocalStorage();
                     renderEvents();
-                    alert('Event removed.');
-                }
+                    showModal('Event Removed', 'The event has been removed from your timeline.');
+                });
+            } else if (e.target.classList.contains('edit-btn')) {
+                const index = parseInt(e.target.dataset.index);
+                editingEventIndex = index;
+                const eventToEdit = events[index];
+
+                eventNameInput.value = eventToEdit.name;
+                eventTypeInput.value = eventToEdit.type;
+                eventAmountInput.value = eventToEdit.amount;
+                // Format date for input type="date" (YYYY-MM-DD)
+                const dateObj = new Date(eventToEdit.date);
+                const yyyy = dateObj.getFullYear();
+                const mm = String(dateObj.getMonth() + 1).padStart(2, '0');
+                const dd = String(dateObj.getDate()).padStart(2, '0');
+                eventDateInput.value = `${yyyy}-${mm}-${dd}`;
+
+                addEventBtn.textContent = 'Update Event';
+                showModal('Edit Event', 'Modify the event details above and click "Update Event" to save changes.');
             }
         });
 
-        function talkToHuman() {
-            // Margaret's persona: "Human reassurance in high-stakes moments"
-            // User requirements: "Must offer a clearly visible, one-click option to request human help at any time."
-            // "Must deliver an immediate confirmation of receipt (visual + text). Example: 'Thanks, Margaret—we're on it.'"
-            // "Must display human names/roles (e.g., 'Mary from Customer Care') and timestamps to create transparency."
-            const now = new Date();
-            const currentTime = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        resetAllDataBtn.addEventListener('click', () => {
+            showModal('Confirm Reset', 'Are you sure you want to reset ALL your Horizons data? This cannot be undone.', 'confirm', () => {
+                localStorage.clear();
+                goal = null;
+                events = [];
+                chatHistory = []; // Clear chat history on full reset
+                isHumanEscalated = false; // Reset escalation flag
+                editingEventIndex = -1;
+                renderGoal();
+                renderEvents();
+                renderChatHistory(); // Re-render chat to show initial bot message
+                // Reset default date for inputs
+                const today = new Date();
+                const yyyy = today.getFullYear();
+                const mm = String(today.getMonth() + 1).padStart(2, '0');
+                const dd = String(today.getDate()).padStart(2, '0');
+                const todayString = `${yyyy}-${mm}-${dd}`;
+                goalDateInput.value = todayString;
+                eventDateInput.value = todayString;
+                showModal('Data Reset', 'All your Horizons data has been cleared.');
+            });
+        });
 
-            alert(`Thanks, Margaret – your request has been received!\n\nMary from Customer Care will be with you shortly.\n(Timestamp: ${currentTime})`);
-            // In a real app, this would trigger a live chat, call, or ticket creation.
+        // --- Chatbot Functions ---
+        function toggleChat() {
+            chatContainer.classList.toggle('open');
+            if (chatContainer.classList.contains('open')) {
+                chatMessagesDiv.scrollTop = chatMessagesDiv.scrollHeight; // Scroll to bottom on open
+                chatInput.focus();
+            }
         }
+
+        function addMessageToChat(sender, message) {
+            const messageDiv = document.createElement('div');
+            messageDiv.classList.add('chat-message', sender);
+            messageDiv.textContent = message;
+            chatMessagesDiv.appendChild(messageDiv);
+            chatMessagesDiv.scrollTop = chatMessagesDiv.scrollHeight; // Auto-scroll to latest message
+        }
+
+        function renderChatHistory() {
+            chatMessagesDiv.innerHTML = ''; // Clear existing messages
+            if (chatHistory.length === 0) {
+                // Add initial bot message if history is empty
+                addMessageToChat('bot', "Hello! I'm your Revolut Assistant. How can I help you with your financial horizons today?");
+            } else {
+                chatHistory.forEach(msg => {
+                    addMessageToChat(msg.role === 'user' ? 'user' : 'bot', msg.parts[0].text);
+                });
+            }
+        }
+
+        async function getBotResponse(userMessage) {
+            if (isHumanEscalated || isAILoading) return; // Prevent new AI responses if escalated or loading
+
+            isAILoading = true;
+            chatSendBtn.disabled = true; // Disable send button
+            const loadingIndicator = document.createElement('div');
+            loadingIndicator.classList.add('chat-loading-indicator');
+            loadingIndicator.textContent = 'Assistant is typing...';
+            chatMessagesDiv.appendChild(loadingIndicator);
+            chatMessagesDiv.scrollTop = chatMessagesDiv.scrollHeight;
+
+            // Check for escalation keywords
+            const lowerCaseMessage = userMessage.toLowerCase();
+            const escalationKeywords = ['human', 'talk', 'agent', 'appointment', 'schedule', 'speak to someone', 'customer service', 'help me now'];
+            const needsEscalation = escalationKeywords.some(keyword => lowerCaseMessage.includes(keyword));
+
+            if (needsEscalation) {
+                isHumanEscalated = true; // Set flag to prevent further AI responses
+                saveToLocalStorage(); // Save escalation state
+
+                chatMessagesDiv.removeChild(loadingIndicator);
+                addMessageToChat('bot', "I understand you'd like to speak with a human or schedule an appointment. Let me connect you directly with our support team.");
+                // Immediately show the human escalation modal
+                const now = new Date();
+                const currentTime = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                showModal(
+                    'Connecting You to Support',
+                    `Thanks, Margaret – your request has been received!\n\nMary from Customer Care will be with you shortly.\n(Timestamp: ${currentTime})`
+                );
+                isAILoading = false;
+                chatSendBtn.disabled = false;
+                return;
+            }
+
+            // If not escalating, proceed with LLM call
+            try {
+                // Add user message to chat history for LLM context
+                chatHistory.push({ role: "user", parts: [{ text: userMessage }] });
+
+                const payload = { contents: chatHistory };
+                const apiKey = ""; // Canvas will provide this at runtime
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const result = await response.json();
+                chatMessagesDiv.removeChild(loadingIndicator); // Remove loading indicator
+
+                if (result.candidates && result.candidates.length > 0 &&
+                    result.candidates[0].content && result.candidates[0].content.parts &&
+                    result.candidates[0].content.parts.length > 0) {
+                    const botResponseText = result.candidates[0].content.parts[0].text;
+                    addMessageToChat('bot', botResponseText);
+                    chatHistory.push({ role: "model", parts: [{ text: botResponseText }] }); // Add bot response to history
+                    saveToLocalStorage(); // Save updated chat history
+                } else {
+                    addMessageToChat('bot', "I'm sorry, I couldn't get a response right now. Please try again later.");
+                    console.error("Unexpected API response structure:", result);
+                }
+            } catch (error) {
+                chatMessagesDiv.removeChild(loadingIndicator); // Remove loading indicator
+                addMessageToChat('bot', "Oops! Something went wrong. Please check your internet connection or try again later.");
+                console.error("Error fetching AI response:", error);
+            } finally {
+                isAILoading = false;
+                chatSendBtn.disabled = false;
+                chatInput.focus(); // Focus input after response
+            }
+        }
+
+        chatInputForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const userMessage = chatInput.value.trim();
+            if (userMessage) {
+                addMessageToChat('user', userMessage);
+                chatInput.value = ''; // Clear input field
+                getBotResponse(userMessage);
+            }
+        });
+
+        // --- Theme Switching ---
+        themeSelect.addEventListener('change', (e) => {
+            document.body.dataset.theme = e.target.value;
+            saveToLocalStorage(); // Save selected theme
+        });
 
         // --- Initial Load ---
         document.addEventListener('DOMContentLoaded', () => {
@@ -652,14 +1379,16 @@
             renderGoal();
             renderEvents();
 
-            // Set default date for goal and event to today
-            const today = new Date();
-            const yyyy = today.getFullYear();
-            const mm = String(today.getMonth() + 1).padStart(2, '0'); // Months are 0-indexed
-            const dd = String(today.getDate()).padStart(2, '0');
-            const todayString = `${yyyy}-${mm}-${dd}`;
-            goalDateInput.value = todayString;
-            eventDateInput.value = todayString;
+            // Set default date for goal and event to today if not loaded from storage
+            if (!goalDateInput.value) {
+                const today = new Date();
+                const yyyy = today.getFullYear();
+                const mm = String(today.getMonth() + 1).padStart(2, '0');
+                const dd = String(today.getDate()).padStart(2, '0');
+                const todayString = `${yyyy}-${mm}-${dd}`;
+                goalDateInput.value = todayString;
+                eventDateInput.value = todayString;
+            }
         });
     </script>
 </body>
